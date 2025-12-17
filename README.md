@@ -81,7 +81,7 @@ O sistema foi desenvolvido como projeto acadêmico, demonstrando boas práticas 
 ## 🛠️ Tecnologias Utilizadas
 
 ### Backend
-- **Python 3.x**
+- **Python 3.13.5**
 - **Django 5.2.7** - Framework web principal
 - **SQLite** - Banco de dados (desenvolvimento)
 
@@ -108,7 +108,7 @@ O sistema foi desenvolvido como projeto acadêmico, demonstrando boas práticas 
 Antes de começar, certifique-se de ter instalado:
 
 ```bash
-Python 3.8+
+Python 3.10+
 pip (gerenciador de pacotes Python)
 Git
 ```
@@ -248,15 +248,15 @@ DATABASES = {
 ```
 Administrador:
 - Email: admin@louercar.com
-- Senha: 12345
+- Senha: 123
 
 Funcionário:
 - Email: func@louercar.com
-- Senha: 1234
+- Senha: 123
 
 Cliente:
 - Email: pedro@gmail.com
-- Senha: 12345678
+- Senha: 123
 ```
 
 ## 📁 Estrutura do Projeto
