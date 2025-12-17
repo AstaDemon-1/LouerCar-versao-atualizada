@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+
+{% block title %}Aprovar Solicitação - LouerCar{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card border-success">
+            <div class="card-header bg-success text-white">
+                <h4 class="mb-0">
+                    <i class="bi bi-check-circle"></i> Aprovar Solicitação de Aluguel
+                </h4>
+            </div>
+            <div class="card-body">
+                <div class="text-center mb-4">
+                    <i class="bi bi-calendar-check text-success" style="font-size: 4rem;"></i>
+                </div>
+
+                <h5 class="text-center mb-4">Deseja aprovar esta solicitação?</h5>
+                
+                <div class="card mb-3">
+                    <div class="card-header bg-light">
+                        <h6 class="mb-0"><i class="bi bi-info-circle"></i> Detalhes da Solicitação</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-2">
+                            <div class="col-md-6">
+                                <strong>Solicitação:</strong> #{{ solicitacao.id_solicitacao }}
+                            </div>
+                            <div class="col-md-6">
+                                <strong>Data:</strong> {{ solicitacao.criado_em|date:"d/m/Y H:i" }}
+                            </div>
+                        </div>
+                        
+                        <hr>
+                        
+                        <div class="row mb-2">
+                            <div class="col-md-12">
+                                <strong><i class="bi bi-person"></i> Cliente:</strong><br>
+                                {{ solicitacao.perfil_cliente.usuario.username }}<br>
+                                <small class="text-muted">
+                                    CNH: {{ solicitacao.perfil_cliente.CNH }}<br>
+                                    Telefone: {{ solicitacao.perfil_cliente.telefone }}
+                                </small>
+                            </div>
+                        </div>
+                        
+                        <hr>
+                        
+                        <div class="row mb-2">
+                            <div class="col-md-12">
+                                <strong><i class="bi bi-car-front"></i> Carro:</strong><br>
+                                {{ solicitacao.carro.modelo }} - {{ solicitacao.carro.placa }}<br>
+                                <small class="text-muted">Ano: {{ solicitacao.carro.ano }}</small>
+                            </div>
+                        </div>
+                        
+                        <hr>
+                        
+                        <div class="row mb-2">
+                            <div class="col-md-6">
+                                <strong><i class="bi bi-calendar"></i> Início:</strong><br>
+                                {{ solicitacao.data_inicio|date:"d/m/Y H:i" }}
+                            </div>
+                            <div class="col-md-6">
+                                <strong><i class="bi bi-calendar-x"></i> Término:</strong><br>
+                                {{ solicitacao.data_fim|date:"d/m/Y H:i" }}
+                            </div>
+                        </div>
+                        
+                        <div class="row mb-2">
+                            <div class="col-md-12">
+                                <div class="alert alert-info mt-2">
+                                    <strong><i class="bi bi-clock"></i> Duração:</strong> {{ solicitacao.calcular_dias }} dia(s)
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <hr>
+                        
+                        <div class="row">
+                            <div class="col-md-12">
+                                <strong><i class="bi bi-cash-coin"></i> Valor Estimado:</strong>
+                                <h4 class="text-success mb-0">R$ {{ solicitacao.valor_estimado|floatformat:2 }}</h4>
+                            </div>
+                        </div>
+                        
+                        {% if solicitacao.observacoes %}
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <strong><i class="bi bi-chat-left-text"></i> Observações do Cliente:</strong>
+                                <p class="text-muted mb-0">{{ solicitacao.observacoes }}</p>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="alert alert-success">
+                    <i class="bi bi-check-circle"></i>
+                    <strong>Ao aprovar esta solicitação:</strong>
+                    <ul class="mb-0 mt-2">
+                        <li>Um novo aluguel oficial será criado automaticamente</li>
+                        <li>O carro será marcado como <strong>ALUGADO</strong></li>
+                        <li>O status da solicitação será atualizado para <strong>APROVADO</strong></li>
+                        <li>Você será registrado como o funcionário responsável</li>
+                    </ul>
+                </div>
+
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="d-flex justify-content-between mt-4 gap-2">
+                        <a href="{% url 'solicitacoes_pendentes' %}" class="btn btn-secondary flex-fill">
+                            <i class="bi bi-arrow-left"></i> Voltar
+                        </a>
+                        <button type="submit" class="btn btn-success btn-lg flex-fill">
+                            <i class="bi bi-check-circle"></i> Sim, Aprovar e Criar Aluguel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

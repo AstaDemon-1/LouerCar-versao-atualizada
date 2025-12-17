@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}LouerCar{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        /* TEMA LIGHT (padrão) */
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: #f5f7fa; 
+            overflow-x: hidden;
+            transition: background 0.3s ease;
+        }
+        
+        /* TEMA DARK */
+        body.dark-mode {
+            background: #0a0e27;
+            color: #e0e0e0;
+        }
+        
+        body.dark-mode .card {
+            background: #1a1f3a;
+            color: #e0e0e0;
+            border-color: #2a2f4a;
+        }
+        
+        body.dark-mode .table {
+            color: #e0e0e0;
+        }
+        
+        body.dark-mode .form-control,
+        body.dark-mode .form-select {
+            background: #2a2f4a;
+            color: #e0e0e0;
+            border-color: #3a3f5a;
+        }
+        
+        body.dark-mode .topbar {
+            background: #1a1f3a;
+            color: #e0e0e0;
+        }
+        
+        /* SIDEBAR */
+        .sidebar { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            height: 100vh; 
+            width: 260px; 
+            background: linear-gradient(180deg, #667eea 0%, #764ba2 100%); 
+            padding: 20px 0; 
+            transition: transform 0.3s ease; 
+            z-index: 1000; 
+            overflow-y: auto; 
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1); 
+        }
+        
+        /* SIDEBAR DARK MODE */
+        body.dark-mode .sidebar {
+            background: linear-gradient(180deg, rgba(255, 20, 147, 0.3) 0%, rgba(0, 191, 255, 0.3) 100%), #000;
+        }
+        
+        .sidebar.hidden { transform: translateX(-100%); }
+        .sidebar-brand { padding: 0 20px 20px; border-bottom: 1px solid rgba(255,255,255,0.2); margin-bottom: 20px; }
+        .sidebar-brand h3 { color: white; font-weight: bold; margin: 0; }
+        .sidebar-brand p { color: rgba(255,255,255,0.8); margin: 5px 0 0; font-size: 0.85rem; }
+        .sidebar-menu { list-style: none; padding: 0; }
+        .sidebar-menu li { margin: 5px 0; }
+        .sidebar-menu a { display: flex; align-items: center; padding: 12px 20px; color: white; text-decoration: none; transition: all 0.3s; border-left: 3px solid transparent; }
+        .sidebar-menu a:hover, .sidebar-menu a.active { background: rgba(255,255,255,0.1); border-left-color: white; }
+        .sidebar-menu a i { margin-right: 10px; font-size: 1.2rem; width: 25px; text-align: center; }
+        .sidebar-divider { height: 1px; background: rgba(255,255,255,0.2); margin: 10px 20px; }
+        .sidebar-user { padding: 15px 20px; background: rgba(0,0,0,0.2); color: white; margin: 10px; border-radius: 10px; }
+        .sidebar-user .user-name { font-weight: bold; margin-bottom: 5px; }
+        .sidebar-user .user-badge { display: inline-block; padding: 3px 10px; background: rgba(255,255,255,0.2); border-radius: 15px; font-size: 0.75rem; }
+        
+        /* ⭐ TAGS NA SIDEBAR ⭐ */
+        .sidebar-tags {
+            padding: 15px 20px;
+            margin: 0 10px 10px 10px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 10px;
+        }
+        
+        .sidebar-tags h6 {
+            color: white;
+            font-size: 0.8rem;
+            margin-bottom: 10px;
+            opacity: 0.8;
+        }
+        
+        .sidebar-tags .tag-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            margin: 3px;
+            border-radius: 15px;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+        
+        /* DARK MODE TOGGLE */
+        .dark-mode-toggle {
+            padding: 12px 20px;
+            margin: 10px 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .dark-mode-toggle:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .dark-mode-toggle span {
+            color: white;
+            font-size: 0.9rem;
+        }
+        
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255,255,255,0.3);
+            transition: .4s;
+            border-radius: 24px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: #2196F3;
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        
+        /* BADGE NOVO */
+        .badge-novo {
+            animation: pulse 2s infinite;
+            font-size: 0.7rem;
+            margin-left: 5px;
+            padding: 3px 8px;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.05); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        
+        .main-content { margin-left: 260px; min-height: 100vh; transition: margin-left 0.3s ease; }
+        .main-content.expanded { margin-left: 0; }
+        
+        .topbar { 
+            background: white; 
+            padding: 15px 30px; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05); 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+        }
+        
+        .menu-toggle { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #667eea; padding: 5px 10px; }
+        .topbar-right { display: flex; align-items: center; gap: 15px; }
+        .content-area { padding: 30px; }
+        .alert { margin: 20px 30px 0; border-radius: 10px; border: none; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        
+        @media (max-width: 768px) { 
+            .sidebar { transform: translateX(-100%); } 
+            .sidebar.show { transform: translateX(0); } 
+            .main-content { margin-left: 0; } 
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    {% if request.session.user_id %}
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <h3><i class="bi bi-car-front-fill"></i> LouerCar</h3>
+            <p>Sistema de Gestão</p>
+        </div>
+        
+        <div class="sidebar-user">
+            <div class="d-flex align-items-center mb-2">
+                {% if request.user_obj.foto_perfil %}
+                    <img src="{{ request.user_obj.foto_perfil }}" alt="{{ request.session.username }}" 
+                         class="rounded-circle me-2" style="width: 50px; height: 50px; object-fit: cover;">
+                {% else %}
+                    <div class="rounded-circle me-2 d-flex align-items-center justify-content-center" 
+                         style="width: 50px; height: 50px; background: rgba(255,255,255,0.3);">
+                        <i class="bi bi-person-circle" style="font-size: 2rem;"></i>
+                    </div>
+                {% endif %}
+                <div>
+                    <div class="user-name">{{ request.session.username }}</div>
+                    {% if request.session.is_superuser %}
+                        <span class="user-badge"><i class="bi bi-star-fill"></i> ADMIN</span>
+                    {% elif request.session.is_staff %}
+                        <span class="user-badge"><i class="bi bi-shield-check"></i> FUNC</span>
+                    {% else %}
+                        <span class="user-badge"><i class="bi bi-person"></i> CLIENTE</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- ⭐ MINHAS TAGS ⭐ -->
+        {% if request.user_obj.tags.exists %}
+        <div class="sidebar-tags">
+            <h6><i class="bi bi-tags"></i> MINHAS TAGS</h6>
+            {% for tag in request.user_obj.tags.all %}
+            <span class="tag-badge bg-{{ tag.cor }}">
+                <i class="{{ tag.icone }}"></i> {{ tag.nome }}
+            </span>
+            {% endfor %}
+        </div>
+        {% endif %}
+        
+        <!-- DARK MODE TOGGLE -->
+        <div class="dark-mode-toggle" onclick="toggleDarkMode()">
+            <span><i class="bi bi-moon-stars"></i> Dark Mode</span>
+            <label class="switch">
+                <input type="checkbox" id="darkModeSwitch">
+                <span class="slider"></span>
+            </label>
+        </div>
+        
+        <ul class="sidebar-menu">
+            {% if not request.session.is_staff %}
+                <!-- MENU CLIENTE -->
+                <li><a href="{% url 'dashboard_cliente' %}"><i class="bi bi-house-door-fill"></i><span>Meu Painel</span></a></li>
+                <li><a href="{% url 'meu_perfil' %}"><i class="bi bi-person-circle"></i><span>Meu Perfil</span></a></li>
+                <li><a href="{% url 'carro_list' %}"><i class="bi bi-car-front-fill"></i><span>Ver Carros</span></a></li>
+                <div class="sidebar-divider"></div>
+                <li><a href="{% url 'solicitar_aluguel' %}"><i class="bi bi-calendar-plus"></i><span>Solicitar Aluguel</span></a></li>
+                <li>
+                    <a href="{% url 'minhas_solicitacoes' %}">
+                        <i class="bi bi-clock-history"></i>
+                        <span>Minhas Solicitações</span>
+                    </a>
+                </li>
+                <div class="sidebar-divider"></div>
+                <!-- ⭐ MEUS GRUPOS - NOVO ⭐ -->
+                <li>
+                    <a href="{% url 'meus_grupos' %}">
+                        <i class="bi bi-people-fill"></i>
+                        <span>Meus Grupos</span>
+                        <span class="badge-novo badge bg-danger">NOVO</span>
+                    </a>
+                </li>
+            {% endif %}
+            
+            {% if request.session.is_staff %}
+                <!-- MENU FUNCIONÁRIO -->
+                <li><a href="{% url 'dashboard_funcionario' %}"><i class="bi bi-speedometer2"></i><span>Dashboard</span></a></li>
+                <li><a href="{% url 'meu_perfil' %}"><i class="bi bi-person-circle"></i><span>Meu Perfil</span></a></li>
+                <div class="sidebar-divider"></div>
+                <li><a href="{% url 'carro_list' %}"><i class="bi bi-car-front-fill"></i><span>Carros</span></a></li>
+                <li><a href="{% url 'aluguel_list' %}"><i class="bi bi-calendar-check-fill"></i><span>Aluguéis</span></a></li>
+                <li><a href="{% url 'solicitacoes_pendentes' %}"><i class="bi bi-clipboard-check"></i><span>Solicitações Pendentes</span></a></li>
+                <li>
+                    <a href="{% url 'pagamentos_pendentes' %}">
+                        <i class="bi bi-credit-card"></i>
+                        <span>Pagamentos Pendentes</span>
+                    </a>
+                </li>
+                
+                {% if request.session.is_superuser %}
+                    <div class="sidebar-divider"></div>
+                    <li><a href="{% url 'usuario_list' %}"><i class="bi bi-people-fill"></i><span>Gerenciar Usuários</span></a></li>
+                    <li><a href="{% url 'perfil_list' %}"><i class="bi bi-person-badge-fill"></i><span>Ver Perfis</span></a></li>
+                    <li>
+                        <a href="{% url 'tag_list' %}">
+                            <i class="bi bi-tags-fill"></i>
+                            <span>Tags</span>
+                            <span class="badge-novo badge bg-danger">NOVO</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'grupo_list' %}">
+                            <i class="bi bi-diagram-3-fill"></i>
+                            <span>Grupos</span>
+                        </a>
+                    </li>
+                {% endif %}
+            {% endif %}
+        </ul>
+        <div class="sidebar-divider"></div>
+        <ul class="sidebar-menu">
+            <li><a href="{% url 'logout' %}" style="color: #ffd700;"><i class="bi bi-box-arrow-right"></i><span>Sair</span></a></li>
+        </ul>
+    </aside>
+    
+    <div class="main-content" id="mainContent">
+        <div class="topbar">
+            <button class="menu-toggle" onclick="toggleSidebar()"><i class="bi bi-list"></i></button>
+            <div class="topbar-right"><span>Olá, <strong>{{ request.session.username }}</strong>!</span></div>
+        </div>
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+        <div class="content-area">
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+    {% endif %}
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
+            sidebar.classList.toggle('hidden');
+            mainContent.classList.toggle('expanded');
+        }
+        
+        // DARK MODE
+        function toggleDarkMode() {
+            const body = document.body;
+            const darkModeSwitch = document.getElementById('darkModeSwitch');
+            
+            body.classList.toggle('dark-mode');
+            darkModeSwitch.checked = body.classList.contains('dark-mode');
+            
+            // Salvar preferência no localStorage
+            localStorage.setItem('darkMode', body.classList.contains('dark-mode'));
+        }
+        
+        // Carregar preferência do Dark Mode
+        document.addEventListener('DOMContentLoaded', function() {
+            const darkMode = localStorage.getItem('darkMode') === 'true';
+            const darkModeSwitch = document.getElementById('darkModeSwitch');
+            
+            if (darkMode) {
+                document.body.classList.add('dark-mode');
+                darkModeSwitch.checked = true;
+            }
+        });
+        
+        setTimeout(() => {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                const bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            });
+        }, 5000);
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

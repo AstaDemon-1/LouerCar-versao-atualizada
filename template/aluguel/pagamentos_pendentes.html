@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% block title %}Pagamentos Pendentes - LouerCar{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="bi bi-credit-card-fill"></i> Pagamentos Pendentes</h1>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle"></i>
+            <strong>Instruções:</strong> Aqui você pode visualizar e confirmar pagamentos recebidos dos clientes.
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>Cliente</th>
+                        <th>Carro</th>
+                        <th>Método</th>
+                        <th>Valor</th>
+                        <th>Vencimento</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for pagamento in pagamentos %}
+                    <tr>
+                        <td><strong>#{{ pagamento.id_pagamento }}</strong></td>
+                        <td>
+                            <strong>{{ pagamento.aluguel.perfil_cliente.usuario.username }}</strong><br>
+                            <small class="text-muted">
+                                <i class="bi bi-envelope"></i> {{ pagamento.aluguel.perfil_cliente.usuario.email }}
+                            </small>
+                        </td>
+                        <td>
+                            {{ pagamento.aluguel.carro.modelo }}<br>
+                            <small class="text-muted"><code>{{ pagamento.aluguel.carro.placa }}</code></small>
+                        </td>
+                        <td>
+                            {% if pagamento.metodo_pagamento == 'pix' %}
+                                <i class="bi bi-qr-code"></i> PIX
+                            {% elif pagamento.metodo_pagamento == 'boleto' %}
+                                <i class="bi bi-upc-scan"></i> Boleto
+                            {% elif pagamento.metodo_pagamento == 'cartao' %}
+                                <i class="bi bi-credit-card"></i> Cartão
+                            {% elif pagamento.metodo_pagamento == 'dinheiro' %}
+                                <i class="bi bi-cash"></i> Dinheiro
+                            {% endif %}
+                        </td>
+                        <td><strong class="text-success">R$ {{ pagamento.valor|floatformat:2 }}</strong></td>
+                        <td>{{ pagamento.data_vencimento|date:"d/m/Y H:i" }}</td>
+                        <td>
+                            <span class="badge {{ pagamento.get_status_badge }}">
+                                {{ pagamento.get_status_display }}
+                            </span>
+                        </td>
+                        <td>
+                            {% if pagamento.status == 'pendente' %}
+                            <form method="POST" action="{% url 'confirmar_pagamento' pagamento.id_pagamento %}" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-success" title="Confirmar Pagamento"
+                                        onclick="return confirm('Tem certeza que deseja confirmar este pagamento?')">
+                                    <i class="bi bi-check-circle"></i> Confirmar
+                                </button>
+                            </form>
+                            {% endif %}
+                            <a href="{% url 'aluguel_detail' pagamento.aluguel.id_aluguel %}" 
+                               class="btn btn-sm btn-info" title="Ver Aluguel">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8" class="text-center text-muted py-5">
+                            <i class="bi bi-inbox fs-1"></i>
+                            <p class="mt-2">Nenhum pagamento pendente no momento.</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

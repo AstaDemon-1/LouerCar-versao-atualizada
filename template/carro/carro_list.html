@@ -1,0 +1,164 @@
+{% extends 'base.html' %}
+
+{% block title %}Carros - LouerCar{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="bi bi-car-front-fill"></i> {% if request.session.is_staff %}Gerenciar Carros{% else %}Carros Disponíveis{% endif %}</h1>
+    {% if request.session.is_staff %}
+    <a href="{% url 'carro_create' %}" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> Cadastrar Carro
+    </a>
+    {% endif %}
+</div>
+
+<!-- Estatísticas -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-car-front"></i> Total de Carros</h5>
+                <h2 class="mb-0">{{ total_carros }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-check-circle"></i> Disponíveis</h5>
+                <h2 class="mb-0">{{ disponiveis }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-warning text-white">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-key-fill"></i> Alugados</h5>
+                <h2 class="mb-0">{{ alugados }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-danger text-white">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-tools"></i> Manutenção</h5>
+                <h2 class="mb-0">{{ manutencao }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Filtros -->
+<div class="card mb-3">
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-5">
+                <label class="form-label">Buscar por modelo ou placa</label>
+                <input type="text" name="q" class="form-control" placeholder="Digite aqui..." value="{{ query|default:'' }}">
+            </div>
+            <div class="col-md-5">
+                <label class="form-label">Filtrar por status</label>
+                <select name="status" class="form-control">
+                    <option value="">Todos os Status</option>
+                    <option value="disponivel" {% if status_filter == 'disponivel' %}selected{% endif %}>Disponível</option>
+                    <option value="alugado" {% if status_filter == 'alugado' %}selected{% endif %}>Alugado</option>
+                    <option value="manutencao" {% if status_filter == 'manutencao' %}selected{% endif %}>Manutenção</option>
+                </select>
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="bi bi-search"></i> Buscar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Lista de Carros -->
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Modelo</th>
+                        <th>Placa</th>
+                        <th>Ano</th>
+                        <th>Preço/Dia</th>
+                        <th>Status</th>
+                        {% if request.session.is_staff %}
+                        <th>Cadastrado em</th>
+                        {% endif %}
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for carro in carros %}
+                    <tr>
+                        <td>{{ carro.id_carro }}</td>
+                        <td>
+                            <a href="{% url 'carro_detail' carro.id_carro %}" class="text-decoration-none">
+                                <strong>{{ carro.modelo }}</strong>
+                            </a>
+                        </td>
+                        <td><code>{{ carro.placa }}</code></td>
+                        <td>{{ carro.ano }}</td>
+                        <td><strong>R$ {{ carro.preco_diaria }}</strong></td>
+                        <td>
+                            {% if carro.status == 'disponivel' %}
+                                <span class="badge bg-success">
+                                    <i class="bi bi-check-circle"></i> Disponível
+                                </span>
+                            {% elif carro.status == 'alugado' %}
+                                <span class="badge bg-warning">
+                                    <i class="bi bi-key-fill"></i> Alugado
+                                </span>
+                            {% elif carro.status == 'manutencao' %}
+                                <span class="badge bg-danger">
+                                    <i class="bi bi-tools"></i> Manutenção
+                                </span>
+                            {% endif %}
+                        </td>
+                        {% if request.session.is_staff %}
+                        <td>{{ carro.criado_em|date:"d/m/Y H:i" }}</td>
+                        {% endif %}
+                        <td>
+                            <a href="{% url 'carro_detail' carro.id_carro %}" class="btn btn-sm btn-info" title="Visualizar">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            {% if request.session.is_staff %}
+                            <a href="{% url 'carro_update' carro.id_carro %}" class="btn btn-sm btn-warning" title="Editar">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <a href="{% url 'carro_delete' carro.id_carro %}" class="btn btn-sm btn-danger" title="Deletar">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                            {% else %}
+                            {% if carro.status == 'disponivel' %}
+                            <a href="{% url 'solicitar_aluguel_carro' carro.id_carro %}" class="btn btn-sm btn-success" title="Solicitar Aluguel">
+                                <i class="bi bi-calendar-plus"></i> Alugar
+                            </a>
+                            {% endif %}
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="{% if request.session.is_staff %}8{% else %}7{% endif %}" class="text-center text-muted py-5">
+                            <i class="bi bi-inbox fs-1"></i>
+                            <p class="mt-2">Nenhum carro cadastrado ainda.</p>
+                            {% if request.session.is_staff %}
+                            <a href="{% url 'carro_create' %}" class="btn btn-primary">
+                                <i class="bi bi-plus-circle"></i> Cadastrar Primeiro Carro
+                            </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

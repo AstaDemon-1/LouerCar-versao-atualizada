@@ -1,0 +1,470 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LouerCar - Aluguel de Carros</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            background: linear-gradient(180deg, #0a1128 0%, #1a1f3a 100%);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        /* ESTRELAS NO FUNDO */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle linear infinite;
+        }
+        
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+        
+        /* Criar estrelas de diferentes tamanhos */
+        .star.small { width: 1px; height: 1px; }
+        .star.medium { width: 2px; height: 2px; }
+        .star.large { width: 3px; height: 3px; }
+        
+        /* Container principal */
+        .content-wrapper {
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* BOTÃO FLUTUANTE DE WHATSAPP */
+        .whatsapp-float {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1000;
+            animation: pulse 2s infinite;
+        }
+        .whatsapp-float .btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #25D366;
+            color: white;
+            font-size: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            border: none;
+        }
+        .whatsapp-float .btn:hover {
+            background: #128C7E;
+            transform: scale(1.1);
+        }
+        
+        /* HERO SECTION */
+        .hero-section {
+            padding: 100px 0 50px 0;
+            color: white;
+            text-align: center;
+        }
+        .hero-section h1 {
+            font-size: 4rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            animation: fadeInDown 1s;
+        }
+        .hero-section p {
+            font-size: 1.5rem;
+            margin: 20px 0;
+            animation: fadeInUp 1s;
+        }
+        
+        /* BOTÃO DE LOGIN FLUTUANTE */
+        .btn-login {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            animation: pulse 2s infinite;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        
+        /* CARDS DE CARROS */
+        .car-card {
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: none;
+            border-radius: 15px;
+            overflow: hidden;
+            background: rgba(255,255,255,0.95);
+            margin-bottom: 30px;
+            height: 100%;
+        }
+        .car-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+        }
+        
+        /* IMAGENS DOS CARROS */
+        .car-image-container {
+            width: 100%;
+            height: 250px;
+            overflow: hidden;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        .car-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .car-image-container .no-image {
+            color: white;
+            font-size: 5rem;
+        }
+        
+        /* BADGE DE STATUS */
+        .status-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        
+        /* SECTION TITLE */
+        .section-title {
+            color: white;
+            text-align: center;
+            margin: 50px 0 30px 0;
+            font-size: 2.5rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        /* FEATURES SECTION */
+        .features {
+            background: rgba(255,255,255,0.95);
+            padding: 60px 0;
+            margin-top: 50px;
+        }
+        .feature-box {
+            text-align: center;
+            padding: 30px;
+            transition: transform 0.3s;
+        }
+        .feature-box:hover {
+            transform: translateY(-10px);
+        }
+        .feature-box i {
+            font-size: 3rem;
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+        
+        /* CONTACT SECTION */
+        .contact-section {
+            background: rgba(255,255,255,0.05);
+            padding: 40px 0;
+            margin-top: 50px;
+        }
+        .contact-card {
+            background: rgba(255,255,255,0.95);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .contact-card i {
+            font-size: 3rem;
+            color: #25D366;
+            margin-bottom: 15px;
+        }
+        .contact-card h4 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+        .contact-card a {
+            display: inline-block;
+            margin: 5px;
+            padding: 10px 20px;
+            background: #25D366;
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            transition: all 0.3s;
+        }
+        .contact-card a:hover {
+            background: #128C7E;
+            transform: scale(1.05);
+        }
+        
+        /* FOOTER */
+        .footer {
+            background: rgba(0,0,0,0.5);
+            color: white;
+            padding: 30px 0;
+            text-align: center;
+        }
+        
+        /* PREÇO */
+        .car-price {
+            font-size: 1.5rem;
+            color: #667eea;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        /* ANIMAÇÕES */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(255, 255, 255, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Estrelas no Fundo -->
+    <div class="stars" id="stars"></div>
+
+    <!-- Container de Conteúdo -->
+    <div class="content-wrapper">
+        <!-- Botão de Login -->
+        <a href="{% url 'login' %}" class="btn btn-light btn-lg btn-login">
+            <i class="bi bi-box-arrow-in-right"></i> Login
+        </a>
+
+        <!-- Botão WhatsApp -->
+        <div class="whatsapp-float">
+            <a href="https://wa.me/5561999887766?text=Olá!%20Gostaria%20de%20alugar%20um%20carro" 
+               target="_blank" class="btn" title="Fale conosco no WhatsApp">
+                <i class="bi bi-whatsapp"></i>
+            </a>
+        </div>
+
+        <!-- Hero Section -->
+        <div class="hero-section">
+            <div class="container">
+                <h1><i class="bi bi-car-front-fill"></i> LouerCar</h1>
+                <p>🚗 Bem-vindo à LouerCar! 🚗</p>
+                <p class="lead">Aqui você aluga seu carro no preço ideal</p>
+                <div class="mt-4">
+                    <a href="{% url 'register' %}" class="btn btn-warning btn-lg me-3">
+                        <i class="bi bi-person-plus"></i> Cadastre-se Grátis
+                    </a>
+                    <a href="{% url 'login' %}" class="btn btn-light btn-lg">
+                        <i class="bi bi-box-arrow-in-right"></i> Fazer Login
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Carros Disponíveis -->
+        <div class="container">
+            <h2 class="section-title">
+                <i class="bi bi-star-fill"></i> Carros Disponíveis
+            </h2>
+            
+            <div class="row">
+                {% if carros_destaque %}
+                    {% for carro in carros_destaque %}
+                    <div class="col-md-4 mb-4">
+                        <div class="card car-card">
+                            <div class="car-image-container">
+                                {% if carro.foto_url %}
+                                    <img src="{{ carro.foto_url }}" alt="{{ carro.modelo }}">
+                                {% else %}
+                                    <div class="no-image">
+                                        <i class="bi bi-car-front-fill"></i>
+                                    </div>
+                                {% endif %}
+                                
+                                <span class="badge bg-success status-badge">
+                                    <i class="bi bi-check-circle"></i> Disponível
+                                </span>
+                            </div>
+                            
+                            <div class="card-body">
+                                <h5 class="card-title">{{ carro.modelo }}</h5>
+                                <p class="card-text">
+                                    <strong><i class="bi bi-card-text"></i> Placa:</strong> 
+                                    <code>{{ carro.placa }}</code><br>
+                                    <strong><i class="bi bi-calendar"></i> Ano:</strong> 
+                                    {{ carro.ano }}
+                                </p>
+                                
+                                <div class="car-price">
+                                    <i class="bi bi-cash-coin"></i> R$ {{ carro.preco_diaria }}/dia
+                                </div>
+                                
+                                <a href="{% url 'login' %}" class="btn btn-primary w-100 mt-2">
+                                    <i class="bi bi-key"></i> Alugar Agora
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="col-12">
+                        <div class="alert alert-light text-center py-5">
+                            <i class="bi bi-info-circle" style="font-size: 3rem;"></i>
+                            <h4 class="mt-3">Nenhum carro disponível no momento</h4>
+                            <p>Volte em breve para conferir nossas novidades!</p>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Contact Section -->
+        <div class="contact-section">
+            <div class="container">
+                <h2 class="section-title">
+                    <i class="bi bi-telephone-fill"></i> Entre em Contato
+                </h2>
+                <div class="row justify-content-center">
+                    <div class="col-md-8">
+                        <div class="contact-card">
+                            <i class="bi bi-whatsapp"></i>
+                            <h4>Fale Conosco pelo WhatsApp</h4>
+                            <p class="text-muted">
+                                Atendimento de Segunda a Sábado<br>
+                                Das 08:00 às 18:00
+                            </p>
+                            <a href="https://wa.me/5561999887766?text=Olá!%20Gostaria%20de%20alugar%20um%20carro" target="_blank">
+                                <i class="bi bi-whatsapp"></i> (61) 99988-7766
+                            </a>
+                            <a href="tel:+556133334444">
+                                <i class="bi bi-telephone"></i> (61) 3333-4444
+                            </a>
+                            <div class="mt-3">
+                                <small class="text-muted">
+                                    <i class="bi bi-envelope"></i> contato@louercar.com.br
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features Section -->
+        <div class="features">
+            <div class="container">
+                <h2 class="text-center mb-5" style="color: #667eea;">
+                    <i class="bi bi-stars"></i> Por que escolher a LouerCar?
+                </h2>
+                <div class="row">
+                    <div class="col-md-4 feature-box">
+                        <i class="bi bi-shield-check"></i>
+                        <h4>Seguro Completo</h4>
+                        <p>Todos os carros com seguro total incluso para sua tranquilidade</p>
+                    </div>
+                    <div class="col-md-4 feature-box">
+                        <i class="bi bi-cash-coin"></i>
+                        <h4>Melhor Preço</h4>
+                        <p>Preços competitivos e sem taxas escondidas. Transparência total!</p>
+                    </div>
+                    <div class="col-md-4 feature-box">
+                        <i class="bi bi-clock"></i>
+                        <h4>Disponível 24/7</h4>
+                        <p>Alugue quando quiser, onde quiser. Atendimento sempre disponível!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Call to Action -->
+        <div class="container text-center py-5">
+            <div style="background: rgba(255,255,255,0.1); padding: 50px; border-radius: 20px;">
+                <h2 class="text-white mb-4">
+                    <i class="bi bi-rocket-takeoff"></i> Pronto para dirigir?
+                </h2>
+                <p class="text-white lead mb-4">
+                    Cadastre-se agora e aproveite nossa frota completa!
+                </p>
+                <a href="{% url 'register' %}" class="btn btn-warning btn-lg me-2">
+                    <i class="bi bi-person-plus"></i> Criar Conta Grátis
+                </a>
+                <a href="{% url 'login' %}" class="btn btn-light btn-lg">
+                    <i class="bi bi-box-arrow-in-right"></i> Já Tenho Conta
+                </a>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <div class="container">
+                <p class="mb-2">
+                    <i class="bi bi-car-front-fill"></i> 
+                    <strong>LouerCar</strong> - Aluguel de Carros
+                </p>
+                <p class="mb-2">
+                    <i class="bi bi-telephone"></i> (61) 3333-4444 | 
+                    <i class="bi bi-whatsapp"></i> (61) 99988-7766
+                </p>
+                <p class="mb-0">&copy; 2024 LouerCar - Todos os direitos reservados</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // CRIAR ESTRELAS
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            const numberOfStars = 200;
+            
+            for (let i = 0; i < numberOfStars; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                
+                // Tamanho aleatório
+                const size = Math.random();
+                if (size < 0.5) star.classList.add('small');
+                else if (size < 0.8) star.classList.add('medium');
+                else star.classList.add('large');
+                
+                // Posição aleatória
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                
+                // Animação aleatória
+                star.style.animationDuration = (2 + Math.random() * 3) + 's';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                
+                starsContainer.appendChild(star);
+            }
+        }
+        
+        // Criar estrelas ao carregar a página
+        createStars();
+    </script>
+</body>
+</html>

@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+
+{% block title %}Meus Grupos - LouerCar{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="bi bi-people-fill"></i> Meus Grupos</h1>
+    <span class="badge-novo badge bg-danger fs-6">🆕 NOVO</span>
+</div>
+
+<!-- Minhas Tags -->
+{% if tags %}
+<div class="card mb-4">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0"><i class="bi bi-tags"></i> Minhas Tags</h5>
+    </div>
+    <div class="card-body">
+        {% for tag in tags %}
+        <span class="badge {{ tag.get_badge_class }} me-2 mb-2" style="font-size: 1rem; padding: 10px 15px;">
+            <i class="{{ tag.icone }}"></i> {{ tag.nome }}
+        </span>
+        {% endfor %}
+    </div>
+</div>
+{% else %}
+<div class="alert alert-warning">
+    <i class="bi bi-exclamation-triangle"></i>
+    <strong>Você ainda não tem nenhuma tag!</strong><br>
+    Entre em contato com um administrador para receber suas tags e acessar grupos exclusivos.
+</div>
+{% endif %}
+
+<!-- Grupos Disponíveis -->
+<h3 class="mb-3"><i class="bi bi-diagram-3"></i> Grupos Disponíveis</h3>
+
+<div class="row">
+    {% for grupo in grupos %}
+    <div class="col-md-6 mb-4">
+        <div class="card h-100 {% if grupo.id_grupo in grupos_participando %}border-success{% endif %}">
+            <div class="card-header {% if grupo.id_grupo in grupos_participando %}bg-success text-white{% else %}bg-info text-white{% endif %}">
+                <h5 class="mb-0">
+                    <i class="bi bi-people"></i> {{ grupo.nome }}
+                    {% if grupo.id_grupo in grupos_participando %}
+                    <span class="badge bg-light text-success float-end">
+                        <i class="bi bi-check-circle"></i> Participando
+                    </span>
+                    {% endif %}
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if grupo.tag %}
+                <p class="mb-2">
+                    <strong>Tag Requerida:</strong>
+                    <span class="badge {{ grupo.tag.get_badge_class }}">
+                        <i class="{{ grupo.tag.icone }}"></i> {{ grupo.tag.nome }}
+                    </span>
+                </p>
+                {% endif %}
+                
+                {% if grupo.descricao %}
+                <p class="text-muted mb-3">{{ grupo.descricao }}</p>
+                {% endif %}
+                
+                {% if grupo.id_grupo not in grupos_participando %}
+                <!-- Modal de Convite -->
+                <div class="alert alert-light border text-center">
+                    <i class="bi bi-info-circle fs-3 text-info"></i>
+                    <h5 class="mt-2">Quer fazer parte deste grupo?</h5>
+                    <p class="text-muted">
+                        {% if grupo.link_whatsapp %}
+                        Clique abaixo para entrar no grupo do WhatsApp!
+                        {% else %}
+                        Clique abaixo para participar!
+                        {% endif %}
+                    </p>
+                    
+                    <a href="{% url 'entrar_grupo' grupo.id_grupo %}" class="btn btn-success btn-lg">
+                        {% if grupo.link_whatsapp %}
+                        <i class="bi bi-whatsapp"></i> Entrar no WhatsApp
+                        {% else %}
+                        <i class="bi bi-box-arrow-in-right"></i> Entrar no Grupo
+                        {% endif %}
+                    </a>
+                </div>
+                {% else %}
+                <div class="alert alert-success text-center">
+                    <i class="bi bi-check-circle fs-3"></i>
+                    <h5 class="mt-2">Você já faz parte deste grupo!</h5>
+                    {% if grupo.link_whatsapp %}
+                    <a href="{{ grupo.link_whatsapp }}" target="_blank" class="btn btn-outline-success mt-2">
+                        <i class="bi bi-whatsapp"></i> Abrir WhatsApp
+                    </a>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+            <div class="card-footer text-muted">
+                <small>
+                    <i class="bi bi-clock"></i> Criado em {{ grupo.criado_em|date:"d/m/Y" }}
+                </small>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body text-center text-muted py-5">
+                <i class="bi bi-inbox fs-1"></i>
+                <p class="mt-2">Nenhum grupo disponível para suas tags.</p>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+{% endblock %}

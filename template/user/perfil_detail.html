@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ perfil.usuario.username }} - LouerCar{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">
+                    <i class="bi bi-person-badge"></i> Detalhes do Perfil
+                </h4>
+                <div>
+                    <a href="{% url 'perfil_update' perfil.id_perfil_cliente %}" class="btn btn-sm btn-warning">
+                        <i class="bi bi-pencil"></i> Editar
+                    </a>
+                    <a href="{% url 'perfil_delete' perfil.id_perfil_cliente %}" class="btn btn-sm btn-danger">
+                        <i class="bi bi-trash"></i> Deletar
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <strong>ID:</strong>
+                        <p class="text-muted">{{ perfil.id_perfil_cliente }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Usuário:</strong>
+                        <p class="text-muted">
+                            <a href="{% url 'usuario_detail' perfil.usuario.id_usuario %}">
+                                {{ perfil.usuario.username }}
+                            </a>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <strong>CNH:</strong>
+                        <p class="text-muted">{{ perfil.CNH }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Telefone:</strong>
+                        <p class="text-muted">{{ perfil.telefone }}</p>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <strong>Endereço:</strong>
+                        <p class="text-muted">{{ perfil.endereco }}</p>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <strong>Criado em:</strong>
+                        <p class="text-muted">{{ perfil.criado_em|date:"d/m/Y H:i:s" }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Atualizado em:</strong>
+                        <p class="text-muted">{{ perfil.atualizado_em|date:"d/m/Y H:i:s" }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <a href="{% url 'perfil_list' %}" class="btn btn-secondary mt-3">
+            <i class="bi bi-arrow-left"></i> Voltar
+        </a>
+    </div>
+</div>
+{% endblock %}

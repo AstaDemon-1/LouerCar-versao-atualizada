@@ -1,0 +1,181 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ usuario.username }} - LouerCar{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">
+                    <i class="bi bi-person-circle"></i> Detalhes do Usuário
+                </h4>
+                <div>
+                    <a href="{% url 'usuario_update' usuario.id_usuario %}" class="btn btn-sm btn-warning">
+                        <i class="bi bi-pencil"></i> Editar
+                    </a>
+                    <a href="{% url 'usuario_delete' usuario.id_usuario %}" class="btn btn-sm btn-danger">
+                        <i class="bi bi-trash"></i> Deletar
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <strong>ID:</strong>
+                        <p class="text-muted">{{ usuario.id_usuario }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Username:</strong>
+                        <p class="text-muted">{{ usuario.username }}</p>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <strong>E-mail:</strong>
+                        <p class="text-muted">{{ usuario.email }}</p>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <strong>Status:</strong>
+                        <p>
+                            {% if usuario.is_active %}
+                                <span class="badge bg-success">Ativo</span>
+                            {% else %}
+                                <span class="badge bg-danger">Inativo</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div class="col-md-4">
+                        <strong>Funcionário:</strong>
+                        <p>
+                            {% if usuario.is_staff %}
+                                <span class="badge bg-info">Sim</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Não</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                    <div class="col-md-4">
+                        <strong>Administrador:</strong>
+                        <p>
+                            {% if usuario.is_superuser %}
+                                <span class="badge bg-warning">Sim</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Não</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <strong>Data de Cadastro:</strong>
+                        <p class="text-muted">{{ usuario.data_cadastro|date:"d/m/Y H:i:s" }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if perfil %}
+        <div class="card mb-4">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-person-badge"></i> Perfil de Cliente
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row mb-2">
+                    <div class="col-md-6">
+                        <strong>CNH:</strong>
+                        <p class="text-muted">{{ perfil.CNH }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Telefone:</strong>
+                        <p class="text-muted">{{ perfil.telefone }}</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <strong>Endereço:</strong>
+                        <p class="text-muted">{{ perfil.endereco }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="col-md-4">
+        <!-- TAGS DO USUÁRIO -->
+        <div class="card mb-3">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-tags"></i> Tags
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if tags %}
+                    <div class="d-flex flex-wrap gap-2 mb-3">
+                        {% for ut in tags %}
+                        <div class="d-flex align-items-center">
+                            <span class="badge {{ ut.tag.get_badge_class }} me-1" style="font-size: 0.9rem; padding: 8px 12px;">
+                                <i class="{{ ut.tag.icone }}"></i> {{ ut.tag.nome }}
+                            </span>
+                            <a href="{% url 'usuario_tag_delete' ut.pk %}" 
+                               class="btn btn-sm btn-danger" 
+                               style="padding: 2px 6px;"
+                               title="Remover tag">
+                                <i class="bi bi-x"></i>
+                            </a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted text-center mb-0">Nenhuma tag atribuída.</p>
+                {% endif %}
+                <a href="{% url 'usuario_tag_create' %}" class="btn btn-sm btn-primary w-100">
+                    <i class="bi bi-plus"></i> Adicionar Tag
+                </a>
+            </div>
+        </div>
+
+        <!-- GRUPOS -->
+        <div class="card mb-3">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-diagram-3"></i> Grupos
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if grupos %}
+                    <ul class="list-group">
+                        {% for ug in grupos %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            {{ ug.grupo.nome }}
+                            <a href="{% url 'usuario_grupo_delete' ug.pk %}" class="btn btn-sm btn-danger">
+                                <i class="bi bi-x"></i>
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-muted text-center">Nenhum grupo atribuído.</p>
+                {% endif %}
+                <div class="mt-3">
+                    <a href="{% url 'usuario_grupo_create' %}" class="btn btn-sm btn-success w-100">
+                        <i class="bi bi-plus"></i> Adicionar ao Grupo
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<a href="{% url 'usuario_list' %}" class="btn btn-secondary">
+    <i class="bi bi-arrow-left"></i> Voltar
+</a>
+{% endblock %}

@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+
+{% block title %}Meu Painel - LouerCar{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="alert alert-info">
+            <h4><i class="bi bi-person-circle"></i> Bem-vindo, {{ usuario.username }}!</h4>
+            <p class="mb-0">Você está logado como <strong>Cliente</strong></p>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <h2><i class="bi bi-car-front-fill"></i> Carros Disponíveis para Aluguel</h2>
+        <hr>
+    </div>
+
+    {% for carro in carros_disponiveis %}
+    <div class="col-md-4 mb-3">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <i class="bi bi-car-front text-primary" style="font-size: 4rem;"></i>
+                <h5 class="card-title mt-3">{{ carro.modelo }}</h5>
+                <p class="card-text">
+                    <strong>Placa:</strong> <code>{{ carro.placa }}</code><br>
+                    <strong>Ano:</strong> {{ carro.ano }}<br>
+                    <span class="badge bg-success mt-2">
+                        <i class="bi bi-check-circle"></i> Disponível
+                    </span>
+                </p>
+                <a href="{% url 'carro_detail' carro.id_carro %}" class="btn btn-primary">
+                    <i class="bi bi-eye"></i> Ver Detalhes
+                </a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="alert alert-warning text-center">
+            <i class="bi bi-exclamation-triangle fs-1"></i>
+            <p class="mt-3">Nenhum carro disponível no momento.</p>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <h2><i class="bi bi-calendar-check"></i> Meus Aluguéis</h2>
+        <hr>
+    </div>
+
+    {% if perfil %}
+        {% if meus_alugueis %}
+        <div class="col-12">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Carro</th>
+                            <th>Início</th>
+                            <th>Término</th>
+                            <th>Valor</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for aluguel in meus_alugueis %}
+                        <tr>
+                            <td>#{{ aluguel.id_aluguel }}</td>
+                            <td>{{ aluguel.carro.modelo }}</td>
+                            <td>{{ aluguel.data_inicio|date:"d/m/Y" }}</td>
+                            <td>{{ aluguel.data_fim|date:"d/m/Y" }}</td>
+                            <td>R$ {{ aluguel.valor|floatformat:2 }}</td>
+                            <td>
+                                {% if aluguel.status == 'ativo' %}
+                                    <span class="badge bg-info">Ativo</span>
+                                {% elif aluguel.status == 'finalizado' %}
+                                    <span class="badge bg-success">Finalizado</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">Cancelado</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-12">
+            <div class="alert alert-info text-center">
+                <i class="bi bi-info-circle fs-1"></i>
+                <p class="mt-3">Você ainda não fez nenhum aluguel.</p>
+            </div>
+        </div>
+        {% endif %}
+    {% else %}
+    <div class="col-12">
+        <div class="alert alert-warning">
+            <h5><i class="bi bi-exclamation-triangle"></i> Complete seu perfil!</h5>
+            <p>Você precisa cadastrar seus dados (CNH, telefone, endereço) para alugar carros.</p>
+            <a href="{% url 'perfil_create' %}" class="btn btn-warning">
+                <i class="bi bi-person-badge"></i> Completar Perfil
+            </a>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

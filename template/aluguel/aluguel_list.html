@@ -1,0 +1,166 @@
+{% extends 'base.html' %}
+
+{% block title %}Aluguéis - LouerCar{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="bi bi-calendar-check-fill"></i> Gerenciar Aluguéis</h1>
+    <a href="{% url 'aluguel_create' %}" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> Novo Aluguel
+    </a>
+</div>
+
+<!-- Estatísticas -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-clipboard-data"></i> Total</h5>
+                <h2 class="mb-0">{{ total_alugueis }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-hourglass-split"></i> Ativos</h5>
+                <h2 class="mb-0">{{ ativos }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-check-circle"></i> Finalizados</h5>
+                <h2 class="mb-0">{{ finalizados }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-secondary text-white">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-x-circle"></i> Cancelados</h5>
+                <h2 class="mb-0">{{ cancelados }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Card de Faturamento -->
+<div class="card mb-3 bg-light">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <h5><i class="bi bi-cash-coin"></i> Valor Total em Aluguéis Ativos</h5>
+                <h2 class="text-success mb-0">R$ {{ valor_total_ativos|floatformat:2 }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Filtros -->
+<div class="card mb-3">
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-5">
+                <label class="form-label">Buscar por carro, placa, cliente ou CNH</label>
+                <input type="text" name="q" class="form-control" placeholder="Digite aqui..." value="{{ query|default:'' }}">
+            </div>
+            <div class="col-md-5">
+                <label class="form-label">Filtrar por status</label>
+                <select name="status" class="form-control">
+                    <option value="">Todos os Status</option>
+                    <option value="ativo" {% if status_filter == 'ativo' %}selected{% endif %}>Ativo</option>
+                    <option value="finalizado" {% if status_filter == 'finalizado' %}selected{% endif %}>Finalizado</option>
+                    <option value="cancelado" {% if status_filter == 'cancelado' %}selected{% endif %}>Cancelado</option>
+                </select>
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="bi bi-search"></i> Buscar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Lista de Aluguéis -->
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Carro</th>
+                        <th>Cliente</th>
+                        <th>Início</th>
+                        <th>Término</th>
+                        <th>Valor</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for aluguel in alugueis %}
+                    <tr>
+                        <td><strong>#{{ aluguel.id_aluguel }}</strong></td>
+                        <td>
+                            <a href="{% url 'carro_detail' aluguel.carro.id_carro %}" class="text-decoration-none">
+                                {{ aluguel.carro.modelo }}
+                            </a><br>
+                            <small class="text-muted"><code>{{ aluguel.carro.placa }}</code></small>
+                        </td>
+                        <td>
+                            <a href="{% url 'usuario_detail' aluguel.perfil_cliente.usuario.id_usuario %}" class="text-decoration-none">
+                                {{ aluguel.perfil_cliente.usuario.username }}
+                            </a><br>
+                            <small class="text-muted">CNH: {{ aluguel.perfil_cliente.CNH }}</small>
+                        </td>
+                        <td>{{ aluguel.data_inicio|date:"d/m/Y H:i" }}</td>
+                        <td>{{ aluguel.data_fim|date:"d/m/Y H:i" }}</td>
+                        <td><strong>R$ {{ aluguel.valor|floatformat:2 }}</strong></td>
+                        <td>
+                            {% if aluguel.status == 'ativo' %}
+                                <span class="badge bg-info">
+                                    <i class="bi bi-hourglass-split"></i> Ativo
+                                </span>
+                            {% elif aluguel.status == 'finalizado' %}
+                                <span class="badge bg-success">
+                                    <i class="bi bi-check-circle"></i> Finalizado
+                                </span>
+                            {% elif aluguel.status == 'cancelado' %}
+                                <span class="badge bg-secondary">
+                                    <i class="bi bi-x-circle"></i> Cancelado
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'aluguel_detail' aluguel.id_aluguel %}" class="btn btn-sm btn-info" title="Visualizar">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            <a href="{% url 'aluguel_update' aluguel.id_aluguel %}" class="btn btn-sm btn-warning" title="Editar">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <a href="{% url 'aluguel_delete' aluguel.id_aluguel %}" class="btn btn-sm btn-danger" title="Deletar">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8" class="text-center text-muted py-5">
+                            <i class="bi bi-inbox fs-1"></i>
+                            <p class="mt-2">Nenhum aluguel registrado ainda.</p>
+                            <a href="{% url 'aluguel_create' %}" class="btn btn-primary">
+                                <i class="bi bi-plus-circle"></i> Registrar Primeiro Aluguel
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

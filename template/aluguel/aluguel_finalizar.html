@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %}Finalizar Aluguel - LouerCar{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card border-success">
+            <div class="card-header bg-success text-white">
+                <h4 class="mb-0">
+                    <i class="bi bi-check-circle"></i> Finalizar Aluguel
+                </h4>
+            </div>
+            <div class="card-body">
+                <div class="text-center mb-4">
+                    <i class="bi bi-calendar-check text-success" style="font-size: 4rem;"></i>
+                </div>
+
+                <p class="lead text-center">Deseja finalizar este aluguel?</p>
+                
+                <div class="alert alert-info">
+                    <h6><i class="bi bi-info-circle"></i> Informações:</h6>
+                    <hr>
+                    <strong>Aluguel:</strong> #{{ aluguel.id_aluguel }}<br>
+                    <strong>Carro:</strong> {{ aluguel.carro.modelo }} ({{ aluguel.carro.placa }})<br>
+                    <strong>Cliente:</strong> {{ aluguel.perfil_cliente.usuario.username }}<br>
+                    <strong>Valor:</strong> R$ {{ aluguel.valor|floatformat:2 }}
+                </div>
+
+                <div class="alert alert-success">
+                    <i class="bi bi-check-circle"></i>
+                    Ao finalizar o aluguel:
+                    <ul class="mb-0 mt-2">
+                        <li>O aluguel será marcado como <strong>FINALIZADO</strong></li>
+                        <li>O carro ficará <strong>DISPONÍVEL</strong> novamente</li>
+                        <li>Esta ação pode ser desfeita editando o aluguel</li>
+                    </ul>
+                </div>
+
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="d-flex justify-content-between mt-4 gap-2">
+                        <a href="{% url 'aluguel_detail' aluguel.id_aluguel %}" class="btn btn-secondary flex-fill">
+                            <i class="bi bi-arrow-left"></i> Voltar
+                        </a>
+                        <button type="submit" class="btn btn-success flex-fill">
+                            <i class="bi bi-check-circle"></i> Sim, Finalizar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

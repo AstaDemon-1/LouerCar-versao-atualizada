@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% block title %}Solicitações Pendentes - LouerCar{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="bi bi-clipboard-check"></i> Solicitações Pendentes</h1>
+</div>
+
+<!-- Estatísticas -->
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card bg-warning text-white">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-clock"></i> Pendentes</h5>
+                <h2 class="mb-0">{{ total_pendentes }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-check-circle"></i> Aprovadas</h5>
+                <h2 class="mb-0">{{ total_aprovadas }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-danger text-white">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-x-circle"></i> Rejeitadas</h5>
+                <h2 class="mb-0">{{ total_rejeitadas }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>Cliente</th>
+                        <th>Contato</th>
+                        <th>Carro</th>
+                        <th>Período</th>
+                        <th>Valor</th>
+                        <th>Data Solicitação</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for solicitacao in solicitacoes %}
+                    <tr>
+                        <td><strong>#{{ solicitacao.id_solicitacao }}</strong></td>
+                        <td>
+                            <strong>{{ solicitacao.perfil_cliente.usuario.username }}</strong><br>
+                            <small class="text-muted">CNH: {{ solicitacao.perfil_cliente.CNH }}</small>
+                        </td>
+                        <td>
+                            <i class="bi bi-telephone"></i> {{ solicitacao.perfil_cliente.telefone }}<br>
+                            <small class="text-muted">{{ solicitacao.perfil_cliente.usuario.email }}</small>
+                        </td>
+                        <td>
+                            {{ solicitacao.carro.modelo }}<br>
+                            <small class="text-muted"><code>{{ solicitacao.carro.placa }}</code></small>
+                        </td>
+                        <td>
+                            <small>
+                                {{ solicitacao.data_inicio|date:"d/m/Y H:i" }}<br>
+                                até {{ solicitacao.data_fim|date:"d/m/Y H:i" }}<br>
+                                <strong>({{ solicitacao.calcular_dias }} dias)</strong>
+                            </small>
+                        </td>
+                        <td><strong>R$ {{ solicitacao.valor_estimado|floatformat:2 }}</strong></td>
+                        <td>{{ solicitacao.criado_em|date:"d/m/Y H:i" }}</td>
+                        <td>
+                            <a href="{% url 'aprovar_solicitacao' solicitacao.id_solicitacao %}" 
+                               class="btn btn-sm btn-success" title="Aprovar">
+                                <i class="bi bi-check-circle"></i> Aprovar
+                            </a>
+                            <a href="{% url 'rejeitar_solicitacao' solicitacao.id_solicitacao %}" 
+                               class="btn btn-sm btn-danger" title="Rejeitar">
+                                <i class="bi bi-x-circle"></i> Rejeitar
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8" class="text-center text-muted py-5">
+                            <i class="bi bi-inbox fs-1"></i>
+                            <p class="mt-2">Nenhuma solicitação pendente no momento.</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

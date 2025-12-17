@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block title %}Deletar Aluguel - LouerCar{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-7">
+        <div class="card border-danger">
+            <div class="card-header bg-danger text-white">
+                <h4 class="mb-0">
+                    <i class="bi bi-exclamation-triangle"></i> Confirmar Exclusão
+                </h4>
+            </div>
+            <div class="card-body">
+                <div class="text-center mb-4">
+                    <i class="bi bi-calendar-x text-danger" style="font-size: 4rem;"></i>
+                </div>
+
+                <p class="lead text-center">Você tem certeza que deseja deletar este aluguel?</p>
+                
+                <div class="alert alert-warning">
+                    <h6><i class="bi bi-info-circle"></i> Informações do Aluguel:</h6>
+                    <hr>
+                    <strong>ID:</strong> #{{ aluguel.id_aluguel }}<br>
+                    <strong>Carro:</strong> {{ aluguel.carro.modelo }} ({{ aluguel.carro.placa }})<br>
+                    <strong>Cliente:</strong> {{ aluguel.perfil_cliente.usuario.username }}<br>
+                    <strong>Período:</strong> {{ aluguel.data_inicio|date:"d/m/Y" }} até {{ aluguel.data_fim|date:"d/m/Y" }}<br>
+                    <strong>Valor:</strong> R$ {{ aluguel.valor|floatformat:2 }}<br>
+                    <strong>Status:</strong> 
+                    {% if aluguel.status == 'ativo' %}
+                        <span class="badge bg-info">Ativo</span>
+                    {% elif aluguel.status == 'finalizado' %}
+                        <span class="badge bg-success">Finalizado</span>
+                    {% elif aluguel.status == 'cancelado' %}
+                        <span class="badge bg-secondary">Cancelado</span>
+                    {% endif %}
+                </div>
+
+                {% if aluguel.status == 'ativo' %}
+                    <div class="alert alert-danger">
+                        <i class="bi bi-exclamation-circle"></i>
+                        <strong>ATENÇÃO:</strong> Este aluguel está <strong>ATIVO</strong>! 
+                        Ao deletá-lo, o carro será marcado como disponível automaticamente.
+                    </div>
+                {% endif %}
+
+                <p class="text-danger text-center">
+                    <i class="bi bi-exclamation-circle"></i>
+                    <strong>Esta ação não pode ser desfeita!</strong>
+                </p>
+
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="d-flex justify-content-between mt-4 gap-2">
+                        <a href="{% url 'aluguel_detail' aluguel.id_aluguel %}" class="btn btn-secondary flex-fill">
+                            <i class="bi bi-arrow-left"></i> Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-danger flex-fill">
+                            <i class="bi bi-trash"></i> Sim, Deletar Aluguel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

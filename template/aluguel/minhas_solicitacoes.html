@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+
+{% block title %}Minhas Solicitações - LouerCar{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="bi bi-clock-history"></i> Minhas Solicitações</h1>
+    <a href="{% url 'solicitar_aluguel' %}" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> Nova Solicitação
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>#</th>
+                        <th>Carro</th>
+                        <th>Período</th>
+                        <th>Valor Estimado</th>
+                        <th>Status</th>
+                        <th>Data Solicitação</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for solicitacao in solicitacoes %}
+                    <tr {% if solicitacao.tem_pagamento_pendente %}class="table-warning"{% endif %}>
+                        <td>
+                            <strong>#{{ solicitacao.id_solicitacao }}</strong>
+                            {% if solicitacao.tem_pagamento_pendente %}
+                            <br><span class="badge bg-danger">PAGAMENTO PENDENTE</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {{ solicitacao.carro.modelo }}<br>
+                            <small class="text-muted"><code>{{ solicitacao.carro.placa }}</code></small>
+                        </td>
+                        <td>
+                            {{ solicitacao.data_inicio|date:"d/m/Y H:i" }}<br>
+                            até {{ solicitacao.data_fim|date:"d/m/Y H:i" }}
+                        </td>
+                        <td><strong>R$ {{ solicitacao.valor_estimado|floatformat:2 }}</strong></td>
+                        <td>
+                            {% if solicitacao.status == 'pendente' %}
+                                <span class="badge bg-warning">
+                                    <i class="bi bi-clock"></i> Aguardando
+                                </span>
+                            {% elif solicitacao.status == 'aprovado' %}
+                                <span class="badge bg-success">
+                                    <i class="bi bi-check-circle"></i> Aprovado
+                                </span>
+                            {% elif solicitacao.status == 'rejeitado' %}
+                                <span class="badge bg-danger">
+                                    <i class="bi bi-x-circle"></i> Rejeitado
+                                </span>
+                            {% elif solicitacao.status == 'cancelado' %}
+                                <span class="badge bg-secondary">
+                                    <i class="bi bi-x-circle"></i> Cancelado
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td>{{ solicitacao.criado_em|date:"d/m/Y H:i" }}</td>
+                        <td>
+                            {% if solicitacao.status == 'pendente' %}
+                                <a href="{% url 'cancelar_solicitacao' solicitacao.id_solicitacao %}" 
+                                   class="btn btn-sm btn-danger" title="Cancelar">
+                                    <i class="bi bi-x-circle"></i>
+                                </a>
+                            {% elif solicitacao.status == 'aprovado' and solicitacao.aluguel_criado %}
+                                {% if solicitacao.tem_pagamento_pendente %}
+                                <a href="{% url 'meu_pagamento' solicitacao.id_solicitacao %}" 
+                                   class="btn btn-sm btn-warning animate__animated animate__pulse animate__infinite" 
+                                   title="Ver Pagamento">
+                                    <i class="bi bi-credit-card"></i> PAGAR AGORA
+                                </a>
+                                {% else %}
+                                <a href="{% url 'aluguel_detail' solicitacao.aluguel_criado.id_aluguel %}" 
+                                   class="btn btn-sm btn-success" title="Ver Aluguel">
+                                    <i class="bi bi-eye"></i> Ver Aluguel
+                                </a>
+                                {% endif %}
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center text-muted py-5">
+                            <i class="bi bi-inbox fs-1"></i>
+                            <p class="mt-2">Você ainda não fez nenhuma solicitação.</p>
+                            <a href="{% url 'solicitar_aluguel' %}" class="btn btn-primary">
+                                <i class="bi bi-plus-circle"></i> Fazer Primeira Solicitação
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+{% endblock %}

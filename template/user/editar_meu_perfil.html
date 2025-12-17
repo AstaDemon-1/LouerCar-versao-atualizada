@@ -1,0 +1,173 @@
+{% extends 'base.html' %}
+
+{% block title %}Editar Meu Perfil - LouerCar{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1><i class="bi bi-pencil-square"></i> Editar Meu Perfil</h1>
+            <p class="text-muted">Atualize suas informações pessoais</p>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <form method="POST" novalidate>
+                {% csrf_token %}
+                
+                <!-- Informações da Conta -->
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">
+                            <i class="bi bi-person-circle"></i> Informações da Conta
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Nome de Usuário</label>
+                                <input type="text" class="form-control" value="{{ usuario.username }}" disabled>
+                                <small class="text-muted">O nome de usuário não pode ser alterado</small>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">E-mail <span class="text-danger">*</span></label>
+                                <input type="email" name="email" class="form-control" value="{{ usuario.email }}" required>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <label class="form-label">
+                                    <i class="bi bi-image"></i> URL da Foto de Perfil
+                                </label>
+                                <input type="url" name="foto_perfil" class="form-control" 
+                                       value="{{ usuario.foto_perfil|default:'' }}"
+                                       placeholder="https://exemplo.com/minha-foto.jpg">
+                                <small class="text-muted">
+                                    Cole o link de uma imagem da web (Imgur, Postimages, Gravatar, etc.)
+                                </small>
+                                
+                                {% if usuario.foto_perfil %}
+                                <div class="mt-2 text-center">
+                                    <p class="text-muted small">Preview da foto atual:</p>
+                                    <img src="{{ usuario.foto_perfil }}" alt="Preview" 
+                                         class="rounded-circle" style="width: 100px; height: 100px; object-fit: cover;">
+                                </div>
+                                {% endif %}
+                                
+                                <div class="alert alert-info mt-2">
+                                    <i class="bi bi-lightbulb"></i>
+                                    <strong>Dica:</strong> Use sites gratuitos para hospedar sua foto:
+                                    <ul class="mb-0 mt-1">
+                                        <li><a href="https://imgur.com" target="_blank">Imgur</a> - Upload rápido</li>
+                                        <li><a href="https://postimages.org" target="_blank">PostImages</a> - Sem cadastro</li>
+                                        <li><a href="https://gravatar.com" target="_blank">Gravatar</a> - Avatar universal</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Alterar Senha -->
+                <div class="card mb-4">
+                    <div class="card-header bg-warning text-dark">
+                        <h5 class="mb-0">
+                            <i class="bi bi-lock"></i> Alterar Senha (opcional)
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-warning">
+                            <i class="bi bi-info-circle"></i>
+                            Deixe em branco se não quiser alterar a senha
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Nova Senha</label>
+                                <input type="password" name="password" class="form-control" 
+                                       placeholder="Digite a nova senha">
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Confirmar Nova Senha</label>
+                                <input type="password" name="confirm_password" class="form-control" 
+                                       placeholder="Digite novamente">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dados Pessoais (apenas para clientes) -->
+                {% if not usuario.is_staff %}
+                <div class="card mb-4">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0">
+                            <i class="bi bi-person-badge"></i> Dados Pessoais
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">CNH <span class="text-danger">*</span></label>
+                                <input type="text" name="CNH" class="form-control" 
+                                       value="{{ perfil.CNH|default:'' }}" 
+                                       placeholder="Ex: 12345678900"
+                                       required>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Telefone <span class="text-danger">*</span></label>
+                                <input type="text" name="telefone" class="form-control" 
+                                       value="{{ perfil.telefone|default:'' }}" 
+                                       placeholder="Ex: (61) 99999-9999"
+                                       required>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <label class="form-label">Endereço <span class="text-danger">*</span></label>
+                                <textarea name="endereco" class="form-control" rows="3" 
+                                          placeholder="Digite seu endereço completo" 
+                                          required>{{ perfil.endereco|default:'' }}</textarea>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle"></i>
+                            Você precisa completar esses dados para poder alugar carros
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Botões -->
+                <div class="d-flex justify-content-between">
+                    <a href="{% url 'meu_perfil' %}" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left"></i> Cancelar
+                    </a>
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="bi bi-save"></i> Salvar Alterações
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+// Validação de senha
+document.querySelector('form').addEventListener('submit', function(e) {
+    const senha = document.querySelector('input[name="password"]').value;
+    const confirmar = document.querySelector('input[name="confirm_password"]').value;
+    
+    if (senha && senha !== confirmar) {
+        e.preventDefault();
+        alert('❌ As senhas não coincidem!');
+    }
+});
+</script>
+{% endblock %}

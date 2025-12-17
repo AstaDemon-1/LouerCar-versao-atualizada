@@ -1,0 +1,171 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }} - LouerCar{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">
+                    <i class="bi bi-car-front"></i> {{ title }}
+                </h4>
+            </div>
+            <div class="card-body">
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {{ form.non_field_errors }}
+                        </div>
+                    {% endif %}
+
+                    <!-- INFORMAÇÕES BÁSICAS -->
+                    <h5 class="border-bottom pb-2 mb-3">
+                        <i class="bi bi-info-circle"></i> Informações Básicas
+                    </h5>
+
+                    <div class="row">
+                        <div class="col-md-8 mb-3">
+                            <label class="form-label">
+                                {{ form.modelo.label }}
+                                <span class="text-danger">*</span>
+                            </label>
+                            {{ form.modelo }}
+                            {% if form.modelo.errors %}
+                                <div class="text-danger small">{{ form.modelo.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">
+                                {{ form.ano.label }}
+                                <span class="text-danger">*</span>
+                            </label>
+                            {{ form.ano }}
+                            {% if form.ano.help_text %}
+                                <small class="form-text text-muted">{{ form.ano.help_text }}</small>
+                            {% endif %}
+                            {% if form.ano.errors %}
+                                <div class="text-danger small">{{ form.ano.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">
+                                {{ form.placa.label }}
+                                <span class="text-danger">*</span>
+                            </label>
+                            {{ form.placa }}
+                            {% if form.placa.help_text %}
+                                <small class="form-text text-muted">{{ form.placa.help_text }}</small>
+                            {% endif %}
+                            {% if form.placa.errors %}
+                                <div class="text-danger small">{{ form.placa.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">
+                                {{ form.status.label }}
+                                <span class="text-danger">*</span>
+                            </label>
+                            {{ form.status }}
+                            {% if form.status.errors %}
+                                <div class="text-danger small">{{ form.status.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">
+                                {{ form.preco_diaria.label }}
+                                <span class="text-danger">*</span>
+                            </label>
+                            {{ form.preco_diaria }}
+                            {% if form.preco_diaria.help_text %}
+                                <small class="form-text text-muted">{{ form.preco_diaria.help_text }}</small>
+                            {% endif %}
+                            {% if form.preco_diaria.errors %}
+                                <div class="text-danger small">{{ form.preco_diaria.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- FOTO DO CARRO -->
+                    <h5 class="border-bottom pb-2 mb-3 mt-4">
+                        <i class="bi bi-image"></i> Foto do Carro
+                    </h5>
+
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label">
+                                {{ form.foto_url.label }}
+                            </label>
+                            {{ form.foto_url }}
+                            {% if form.foto_url.help_text %}
+                                <small class="form-text text-muted">{{ form.foto_url.help_text }}</small>
+                            {% endif %}
+                            {% if form.foto_url.errors %}
+                                <div class="text-danger small">{{ form.foto_url.errors }}</div>
+                            {% endif %}
+                            
+                            <div class="alert alert-info mt-2">
+                                <i class="bi bi-lightbulb"></i>
+                                <strong>Dica:</strong> Você pode usar imagens do:
+                                <ul class="mb-0 mt-1">
+                                    <li><a href="https://unsplash.com" target="_blank">Unsplash</a> - Fotos gratuitas de alta qualidade</li>
+                                    <li><a href="https://www.pexels.com" target="_blank">Pexels</a> - Banco de imagens grátis</li>
+                                    <li><a href="https://imgur.com" target="_blank">Imgur</a> - Upload de imagens</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- DESCRIÇÃO DO CARRO -->
+                    <h5 class="border-bottom pb-2 mb-3 mt-4">
+                        <i class="bi bi-card-text"></i> Descrição Detalhada
+                    </h5>
+
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label">
+                                {{ form.descricao.label }}
+                            </label>
+                            {{ form.descricao }}
+                            {% if form.descricao.help_text %}
+                                <small class="form-text text-muted">{{ form.descricao.help_text }}</small>
+                            {% endif %}
+                            {% if form.descricao.errors %}
+                                <div class="text-danger small">{{ form.descricao.errors }}</div>
+                            {% endif %}
+                            
+                            <div class="alert alert-secondary mt-2">
+                                <i class="bi bi-info-circle"></i>
+                                <strong>Exemplo de descrição:</strong><br>
+                                "Motor 1.0 Flex, Câmbio Manual, Ar-condicionado, Direção Hidráulica, 4 Portas, Vidros Elétricos, Trava Elétrica, Airbag Duplo."
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i>
+                        <strong>Dica:</strong> Campos marcados com <span class="text-danger">*</span> são obrigatórios.
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-4">
+                        <a href="{% url 'carro_list' %}" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Voltar
+                        </a>
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-save"></i> Salvar Carro
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

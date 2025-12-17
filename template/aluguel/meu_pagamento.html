@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+
+{% block title %}Pagamento - LouerCar{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <!-- Badge NOVO -->
+        <div class="alert alert-warning text-center mb-4 animate__animated animate__pulse animate__infinite">
+            <h4>
+                <span class="badge bg-danger fs-5">🆕 NOVO</span>
+                <strong>Pagamento Disponível!</strong>
+            </h4>
+            <p class="mb-0">Sua solicitação foi aprovada. Efetue o pagamento para confirmar o aluguel.</p>
+        </div>
+
+        <div class="card border-success mb-4">
+            <div class="card-header bg-success text-white">
+                <h4 class="mb-0">
+                    <i class="bi bi-credit-card"></i> Detalhes do Pagamento
+                </h4>
+            </div>
+            <div class="card-body">
+                <!-- Status do Pagamento -->
+                <div class="text-center mb-4">
+                    <h5>Status:</h5>
+                    <span class="badge {{ pagamento.get_status_badge }} fs-4">
+                        {{ pagamento.get_status_display }}
+                    </span>
+                </div>
+
+                <hr>
+
+                <!-- Informações do Aluguel -->
+                <h5><i class="bi bi-car-front"></i> Informações do Aluguel</h5>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <strong>Carro:</strong><br>
+                        {{ aluguel.carro.modelo }} - {{ aluguel.carro.placa }}
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Período:</strong><br>
+                        {{ aluguel.data_inicio|date:"d/m/Y" }} até {{ aluguel.data_fim|date:"d/m/Y" }}
+                    </div>
+                </div>
+
+                <hr>
+
+                <!-- Valor -->
+                <div class="text-center mb-4">
+                    <h5>Valor a Pagar:</h5>
+                    <h2 class="text-success">R$ {{ pagamento.valor|floatformat:2 }}</h2>
+                    <p class="text-muted">Vencimento: {{ pagamento.data_vencimento|date:"d/m/Y H:i" }}</p>
+                </div>
+
+                <hr>
+
+                <!-- Método de Pagamento -->
+                <h5><i class="bi bi-cash-coin"></i> Método de Pagamento</h5>
+                
+                {% if pagamento.metodo_pagamento == 'pix' %}
+                <div class="card bg-light mb-3">
+                    <div class="card-body text-center">
+                        <h4><i class="bi bi-qr-code"></i> Pagamento via PIX</h4>
+                        
+                        <div class="alert alert-info">
+                            <strong>Chave PIX:</strong><br>
+                            <code class="fs-5">{{ pagamento.chave_pix }}</code>
+                        </div>
+
+                        <!-- Simulação de QR Code -->
+                        <div class="mb-3">
+                            <div style="width: 200px; height: 200px; border: 2px solid #000; margin: 0 auto; display: flex; align-items: center; justify-content: center;">
+                                <i class="bi bi-qr-code" style="font-size: 8rem;"></i>
+                            </div>
+                            <p class="text-muted mt-2">Escaneie o QR Code acima com seu app de banco</p>
+                        </div>
+
+                        <div class="alert alert-warning">
+                            <strong>Instruções:</strong>
+                            <ol class="text-start mb-0">
+                                <li>Abra o app do seu banco</li>
+                                <li>Acesse a opção PIX</li>
+                                <li>Escolha "Ler QR Code" ou "Copiar e Colar"</li>
+                                <li>Confirme o pagamento</li>
+                                <li>Aguarde a confirmação (pode levar alguns minutos)</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if pagamento.metodo_pagamento == 'boleto' %}
+                <div class="card bg-light mb-3">
+                    <div class="card-body">
+                        <h4><i class="bi bi-upc-scan"></i> Pagamento via Boleto</h4>
+                        
+                        <div class="alert alert-info">
+                            <strong>Linha Digitável:</strong><br>
+                            <code>{{ pagamento.linha_digitavel }}</code>
+                        </div>
+
+                        <button class="btn btn-primary w-100 mb-2">
+                            <i class="bi bi-download"></i> Baixar Boleto PDF
+                        </button>
+
+                        <button class="btn btn-secondary w-100">
+                            <i class="bi bi-clipboard"></i> Copiar Linha Digitável
+                        </button>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if pagamento.metodo_pagamento == 'cartao' %}
+                <div class="card bg-light mb-3">
+                    <div class="card-body">
+                        <h4><i class="bi bi-credit-card"></i> Pagamento via Cartão de Crédito</h4>
+                        
+                        <div class="alert alert-warning">
+                            Entre em contato com a central pelo WhatsApp para processar o pagamento com cartão.
+                        </div>
+
+                        <a href="https://wa.me/5561999887766?text=Olá!%20Gostaria%20de%20pagar%20o%20aluguel%20com%20cartão" 
+                           target="_blank" 
+                           class="btn btn-success w-100">
+                            <i class="bi bi-whatsapp"></i> Contatar via WhatsApp
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if pagamento.status == 'pendente' %}
+                <div class="alert alert-warning mt-4">
+                    <i class="bi bi-clock"></i>
+                    <strong>Importante:</strong> Após realizar o pagamento, aguarde a confirmação. 
+                    Você receberá um email quando o pagamento for aprovado.
+                </div>
+                {% elif pagamento.status == 'aprovado' %}
+                <div class="alert alert-success mt-4">
+                    <i class="bi bi-check-circle"></i>
+                    <strong>Pagamento Confirmado!</strong> Seu carro estará pronto na data combinada.
+                </div>
+                {% endif %}
+
+                <div class="d-flex justify-content-between mt-4">
+                    <a href="{% url 'minhas_solicitacoes' %}" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left"></i> Voltar
+                    </a>
+                    {% if pagamento.status == 'pendente' %}
+                    <button class="btn btn-primary" onclick="window.location.reload()">
+                        <i class="bi bi-arrow-clockwise"></i> Atualizar Status
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+{% endblock %}

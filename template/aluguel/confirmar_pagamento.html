@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block title %}Confirmar Pagamento - LouerCar{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card border-success">
+            <div class="card-header bg-success text-white">
+                <h4 class="mb-0">
+                    <i class="bi bi-check-circle"></i> Confirmar Recebimento do Pagamento
+                </h4>
+            </div>
+            <div class="card-body">
+                <div class="text-center mb-4">
+                    <i class="bi bi-cash-coin text-success" style="font-size: 4rem;"></i>
+                </div>
+
+                <h5 class="text-center mb-4">Deseja confirmar o recebimento deste pagamento?</h5>
+                
+                <div class="card mb-3">
+                    <div class="card-header bg-light">
+                        <h6 class="mb-0"><i class="bi bi-info-circle"></i> Detalhes do Pagamento</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-2">
+                            <div class="col-md-6">
+                                <strong>Pagamento:</strong> #{{ pagamento.id_pagamento }}
+                            </div>
+                            <div class="col-md-6">
+                                <strong>Aluguel:</strong> #{{ pagamento.aluguel.id_aluguel }}
+                            </div>
+                        </div>
+                        
+                        <hr>
+                        
+                        <div class="row mb-2">
+                            <div class="col-md-12">
+                                <strong><i class="bi bi-person"></i> Cliente:</strong><br>
+                                {{ pagamento.aluguel.perfil_cliente.usuario.username }}<br>
+                                <small class="text-muted">
+                                    Email: {{ pagamento.aluguel.perfil_cliente.usuario.email }}<br>
+                                    Telefone: {{ pagamento.aluguel.perfil_cliente.telefone }}
+                                </small>
+                            </div>
+                        </div>
+                        
+                        <hr>
+                        
+                        <div class="row mb-2">
+                            <div class="col-md-12">
+                                <strong><i class="bi bi-car-front"></i> Carro:</strong><br>
+                                {{ pagamento.aluguel.carro.modelo }} - {{ pagamento.aluguel.carro.placa }}
+                            </div>
+                        </div>
+                        
+                        <hr>
+                        
+                        <div class="row mb-2">
+                            <div class="col-md-6">
+                                <strong><i class="bi bi-cash-coin"></i> Método:</strong><br>
+                                {{ pagamento.get_metodo_pagamento_display }}
+                            </div>
+                            <div class="col-md-6">
+                                <strong><i class="bi bi-currency-dollar"></i> Valor:</strong><br>
+                                <h4 class="text-success mb-0">R$ {{ pagamento.valor|floatformat:2 }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="alert alert-success">
+                    <i class="bi bi-check-circle"></i>
+                    <strong>Ao confirmar este pagamento:</strong>
+                    <ul class="mb-0 mt-2">
+                        <li>O status do pagamento será alterado para <strong>APROVADO</strong></li>
+                        <li>O cliente receberá um <strong>EMAIL DE CONFIRMAÇÃO</strong></li>
+                        <li>O aluguel será confirmado e o carro ficará reservado</li>
+                        <li>Esta ação não pode ser desfeita facilmente</li>
+                    </ul>
+                </div>
+
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="d-flex justify-content-between mt-4 gap-2">
+                        <a href="{% url 'pagamentos_pendentes' %}" class="btn btn-secondary flex-fill">
+                            <i class="bi bi-arrow-left"></i> Voltar
+                        </a>
+                        <button type="submit" class="btn btn-success btn-lg flex-fill">
+                            <i class="bi bi-check-circle"></i> Sim, Confirmar Pagamento
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

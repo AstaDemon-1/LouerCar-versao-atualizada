@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block title %}Usuários - LouerCar{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="bi bi-people-fill"></i> Usuários</h1>
+    <a href="{% url 'usuario_create' %}" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> Novo Usuário
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Username</th>
+                        <th>E-mail</th>
+                        <th>Status</th>
+                        <th>Funcionário</th>
+                        <th>Admin</th>
+                        <th>Data Cadastro</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for usuario in usuarios %}
+                    <tr>
+                        <td>{{ usuario.id_usuario }}</td>
+                        <td>
+                            <a href="{% url 'usuario_detail' usuario.id_usuario %}" class="text-decoration-none">
+                                {{ usuario.username }}
+                            </a>
+                        </td>
+                        <td>{{ usuario.email }}</td>
+                        <td>
+                            {% if usuario.is_active %}
+                                <span class="badge bg-success">Ativo</span>
+                            {% else %}
+                                <span class="badge bg-danger">Inativo</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if usuario.is_staff %}
+                                <i class="bi bi-check-circle-fill text-success"></i>
+                            {% else %}
+                                <i class="bi bi-x-circle-fill text-danger"></i>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if usuario.is_superuser %}
+                                <i class="bi bi-star-fill text-warning"></i>
+                            {% else %}
+                                <i class="bi bi-star text-secondary"></i>
+                            {% endif %}
+                        </td>
+                        <td>{{ usuario.data_cadastro|date:"d/m/Y H:i" }}</td>
+                        <td>
+                            <a href="{% url 'usuario_detail' usuario.id_usuario %}" class="btn btn-sm btn-info" title="Visualizar">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            <a href="{% url 'usuario_update' usuario.id_usuario %}" class="btn btn-sm btn-warning" title="Editar">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <a href="{% url 'usuario_delete' usuario.id_usuario %}" class="btn btn-sm btn-danger" title="Deletar">
+                                <i class="bi bi-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8" class="text-center text-muted">
+                            <i class="bi bi-inbox fs-1"></i>
+                            <p>Nenhum usuário cadastrado ainda.</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

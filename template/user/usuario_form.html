@@ -1,0 +1,172 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }} - LouerCar{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card">
+            <div class="card-header bg-dark text-white">
+                <h4 class="mb-0">
+                    <i class="bi bi-person-plus"></i> {{ title }}
+                </h4>
+            </div>
+            <div class="card-body">
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {{ form.non_field_errors }}
+                        </div>
+                    {% endif %}
+
+                    <!-- INFORMAÇÕES BÁSICAS -->
+                    <h5 class="border-bottom pb-2 mb-3">
+                        <i class="bi bi-person-circle"></i> Informações Básicas
+                    </h5>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">
+                                {{ form.username.label }}
+                                <span class="text-danger">*</span>
+                            </label>
+                            {{ form.username }}
+                            {% if form.username.errors %}
+                                <div class="text-danger small">{{ form.username.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">
+                                {{ form.email.label }}
+                                <span class="text-danger">*</span>
+                            </label>
+                            {{ form.email }}
+                            {% if form.email.errors %}
+                                <div class="text-danger small">{{ form.email.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- SENHA -->
+                    <h5 class="border-bottom pb-2 mb-3 mt-4">
+                        <i class="bi bi-lock"></i> Senha
+                    </h5>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">
+                                {{ form.password.label }}
+                                <span class="text-danger">*</span>
+                            </label>
+                            {{ form.password }}
+                            {% if form.password.help_text %}
+                                <small class="form-text text-muted">{{ form.password.help_text }}</small>
+                            {% endif %}
+                            {% if form.password.errors %}
+                                <div class="text-danger small">{{ form.password.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">
+                                {{ form.confirm_password.label }}
+                                <span class="text-danger">*</span>
+                            </label>
+                            {{ form.confirm_password }}
+                            {% if form.confirm_password.errors %}
+                                <div class="text-danger small">{{ form.confirm_password.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- FOTO DE PERFIL -->
+                    <h5 class="border-bottom pb-2 mb-3 mt-4">
+                        <i class="bi bi-image"></i> Foto de Perfil
+                    </h5>
+
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label">
+                                {{ form.foto_perfil.label }}
+                            </label>
+                            {{ form.foto_perfil }}
+                            {% if form.foto_perfil.help_text %}
+                                <small class="form-text text-muted">{{ form.foto_perfil.help_text }}</small>
+                            {% endif %}
+                            {% if form.foto_perfil.errors %}
+                                <div class="text-danger small">{{ form.foto_perfil.errors }}</div>
+                            {% endif %}
+                            
+                            <div class="alert alert-info mt-2">
+                                <i class="bi bi-lightbulb"></i>
+                                <strong>Dica:</strong> Você pode usar:
+                                <ul class="mb-0 mt-1">
+                                    <li><a href="https://gravatar.com" target="_blank">Gravatar</a> - Avatar universal</li>
+                                    <li><a href="https://imgur.com" target="_blank">Imgur</a> - Upload de imagens</li>
+                                    <li><a href="https://postimages.org" target="_blank">PostImages</a> - Hospedagem grátis</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PERMISSÕES -->
+                    <h5 class="border-bottom pb-2 mb-3 mt-4">
+                        <i class="bi bi-shield-check"></i> Permissões e Status
+                    </h5>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <div class="form-check">
+                                {{ form.is_active }}
+                                <label class="form-check-label" for="{{ form.is_active.id_for_label }}">
+                                    {{ form.is_active.label }}
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <div class="form-check">
+                                {{ form.is_staff }}
+                                <label class="form-check-label" for="{{ form.is_staff.id_for_label }}">
+                                    {{ form.is_staff.label }}
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4 mb-3">
+                            <div class="form-check">
+                                {{ form.is_superuser }}
+                                <label class="form-check-label" for="{{ form.is_superuser.id_for_label }}">
+                                    {{ form.is_superuser.label }}
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        <strong>Atenção:</strong>
+                        <ul class="mb-0 mt-2">
+                            <li><strong>Ativo:</strong> Usuário pode fazer login</li>
+                            <li><strong>Funcionário:</strong> Acesso a carros, aluguéis e solicitações</li>
+                            <li><strong>Administrador:</strong> Acesso total (usuários, perfis, grupos)</li>
+                        </ul>
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-4">
+                        <a href="{% url 'usuario_list' %}" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Voltar
+                        </a>
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-save"></i> Salvar Usuário
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

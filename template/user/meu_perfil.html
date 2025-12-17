@@ -1,0 +1,298 @@
+{% extends 'base.html' %}
+
+{% block title %}Meu Perfil - LouerCar{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12 d-flex justify-content-between align-items-center">
+            <div>
+                <h1><i class="bi bi-person-circle"></i> Meu Perfil</h1>
+                <p class="text-muted">Visualize e gerencie suas informações pessoais</p>
+            </div>
+            <a href="{% url 'editar_meu_perfil' %}" class="btn btn-primary btn-lg">
+                <i class="bi bi-pencil-square"></i> Editar Perfil
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- COLUNA ESQUERDA - Informações Principais -->
+        <div class="col-md-4">
+            <!-- Card do Usuário -->
+            <div class="card mb-4 text-center">
+                <div class="card-body">
+                    <div class="mb-3">
+                        {% if usuario.foto_perfil %}
+                            <img src="{{ usuario.foto_perfil }}" alt="{{ usuario.username }}" 
+                                 class="rounded-circle" style="width: 150px; height: 150px; object-fit: cover;">
+                        {% else %}
+                            <i class="bi bi-person-circle" style="font-size: 6rem; color: #667eea;"></i>
+                        {% endif %}
+                    </div>
+                    <h3>{{ usuario.username }}</h3>
+                    <p class="text-muted">{{ usuario.email }}</p>
+                    
+                    <div class="mt-3">
+                        {% if usuario.is_superuser %}
+                            <span class="badge bg-danger fs-6">
+                                <i class="bi bi-star-fill"></i> ADMINISTRADOR
+                            </span>
+                        {% elif usuario.is_staff %}
+                            <span class="badge bg-info fs-6">
+                                <i class="bi bi-shield-check"></i> FUNCIONÁRIO
+                            </span>
+                        {% else %}
+                            <span class="badge bg-success fs-6">
+                                <i class="bi bi-person"></i> CLIENTE
+                            </span>
+                        {% endif %}
+                    </div>
+
+                    <div class="mt-3">
+                        {% if usuario.is_active %}
+                            <span class="badge bg-success">
+                                <i class="bi bi-check-circle"></i> Conta Ativa
+                            </span>
+                        {% else %}
+                            <span class="badge bg-danger">
+                                <i class="bi bi-x-circle"></i> Conta Inativa
+                            </span>
+                        {% endif %}
+                    </div>
+
+                    <hr>
+
+                    <div class="text-start">
+                        <p class="mb-2">
+                            <strong><i class="bi bi-calendar-plus"></i> Membro desde:</strong><br>
+                            <small class="text-muted">{{ usuario.data_cadastro|date:"d/m/Y" }}</small>
+                        </p>
+                        {% if request.session.is_staff %}
+                        <p class="mb-0">
+                            <strong><i class="bi bi-hash"></i> ID do Usuário:</strong><br>
+                            <small class="text-muted">#{{ usuario.id_usuario }}</small>
+                        </p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card de Grupos -->
+            {% if grupos %}
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-diagram-3"></i> Meus Grupos
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group">
+                        {% for ug in grupos %}
+                        <li class="list-group-item d-flex align-items-center">
+                            <i class="bi bi-folder me-2 text-success"></i>
+                            {{ ug.grupo.nome }}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- COLUNA DIREITA - Detalhes -->
+        <div class="col-md-8">
+            <!-- Informações da Conta -->
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-person-lines-fill"></i> Informações da Conta
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small">Nome de Usuário</label>
+                            <p class="h6">{{ usuario.username }}</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small">E-mail</label>
+                            <p class="h6">{{ usuario.email }}</p>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="text-muted small">Status</label>
+                            <p>
+                                {% if usuario.is_active %}
+                                    <span class="badge bg-success">Ativo</span>
+                                {% else %}
+                                    <span class="badge bg-danger">Inativo</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="text-muted small">Tipo de Conta</label>
+                            <p>
+                                {% if usuario.is_superuser %}
+                                    <span class="badge bg-danger">Admin</span>
+                                {% elif usuario.is_staff %}
+                                    <span class="badge bg-info">Funcionário</span>
+                                {% else %}
+                                    <span class="badge bg-success">Cliente</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="text-muted small">Cadastro</label>
+                            <p class="h6">{{ usuario.data_cadastro|date:"d/m/Y" }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Perfil de Cliente -->
+            {% if perfil %}
+            <div class="card mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-person-badge"></i> Dados Pessoais
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small">CNH</label>
+                            <p class="h6"><code>{{ perfil.CNH }}</code></p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="text-muted small">Telefone</label>
+                            <p class="h6">{{ perfil.telefone }}</p>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12 mb-3">
+                            <label class="text-muted small">Endereço</label>
+                            <p class="h6">{{ perfil.endereco }}</p>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="text-muted small">Cadastrado em</label>
+                            <p>{{ perfil.criado_em|date:"d/m/Y H:i" }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="text-muted small">Última Atualização</label>
+                            <p>{{ perfil.atualizado_em|date:"d/m/Y H:i" }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="card mb-4 border-warning">
+                <div class="card-body text-center">
+                    <i class="bi bi-exclamation-triangle text-warning" style="font-size: 3rem;"></i>
+                    <h5 class="mt-3">Perfil Incompleto</h5>
+                    <p class="text-muted">Complete seu perfil para alugar carros</p>
+                    <a href="{% url 'editar_meu_perfil' %}" class="btn btn-warning">
+                        <i class="bi bi-person-badge"></i> Completar Perfil
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Meus Aluguéis (Cliente) -->
+            {% if alugueis %}
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="bi bi-calendar-check"></i> Meus Últimos Aluguéis
+                    </h5>
+                    <span class="badge bg-light text-dark">{{ alugueis|length }}</span>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Carro</th>
+                                    <th>Data</th>
+                                    <th>Valor</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for aluguel in alugueis %}
+                                <tr>
+                                    <td>{{ aluguel.carro.modelo }}</td>
+                                    <td>{{ aluguel.data_inicio|date:"d/m/Y" }}</td>
+                                    <td>R$ {{ aluguel.valor|floatformat:2 }}</td>
+                                    <td>
+                                        {% if aluguel.status == 'ativo' %}
+                                            <span class="badge bg-info">Ativo</span>
+                                        {% elif aluguel.status == 'finalizado' %}
+                                            <span class="badge bg-success">Finalizado</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">Cancelado</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Aluguéis Gerenciados (Funcionário) -->
+            {% if alugueis_gerenciados %}
+            <div class="card mb-4">
+                <div class="card-header bg-warning text-dark d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="bi bi-briefcase"></i> Aluguéis que Gerenciei
+                    </h5>
+                    <span class="badge bg-dark">{{ alugueis_gerenciados|length }}</span>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Cliente</th>
+                                    <th>Carro</th>
+                                    <th>Data</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for aluguel in alugueis_gerenciados %}
+                                <tr>
+                                    <td>{{ aluguel.perfil_cliente.usuario.username }}</td>
+                                    <td>{{ aluguel.carro.modelo }}</td>
+                                    <td>{{ aluguel.data_inicio|date:"d/m/Y" }}</td>
+                                    <td>
+                                        {% if aluguel.status == 'ativo' %}
+                                            <span class="badge bg-info">Ativo</span>
+                                        {% elif aluguel.status == 'finalizado' %}
+                                            <span class="badge bg-success">Finalizado</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">Cancelado</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

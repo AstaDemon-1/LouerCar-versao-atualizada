@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+
+{% block title %}Solicitar Aluguel - LouerCar{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">
+                    <i class="bi bi-calendar-check"></i> Solicitar Aluguel de Carro
+                </h4>
+            </div>
+            <div class="card-body">
+                {% if carro %}
+                <div class="alert alert-info">
+                    <h5><i class="bi bi-car-front"></i> Carro Selecionado:</h5>
+                    <p class="mb-1"><strong>{{ carro.modelo }}</strong> - {{ carro.placa }}</p>
+                    <p class="mb-0"><strong>Preço:</strong> R$ {{ carro.preco_diaria }}/dia</p>
+                </div>
+                {% endif %}
+
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {{ form.non_field_errors }}
+                        </div>
+                    {% endif %}
+
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label">
+                                {{ form.carro.label }}
+                                <span class="text-danger">*</span>
+                            </label>
+                            {{ form.carro }}
+                            {% if form.carro.errors %}
+                                <div class="text-danger small">{{ form.carro.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">
+                                {{ form.data_inicio.label }}
+                                <span class="text-danger">*</span>
+                            </label>
+                            {{ form.data_inicio }}
+                            {% if form.data_inicio.errors %}
+                                <div class="text-danger small">{{ form.data_inicio.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">
+                                {{ form.data_fim.label }}
+                                <span class="text-danger">*</span>
+                            </label>
+                            {{ form.data_fim }}
+                            {% if form.data_fim.errors %}
+                                <div class="text-danger small">{{ form.data_fim.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label">{{ form.observacoes.label }}</label>
+                            {{ form.observacoes }}
+                            {% if form.observacoes.errors %}
+                                <div class="text-danger small">{{ form.observacoes.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="alert alert-warning">
+                        <i class="bi bi-info-circle"></i>
+                        <strong>Importante:</strong>
+                        <ul class="mb-0 mt-2">
+                            <li>Sua solicitação será enviada para aprovação</li>
+                            <li>Um funcionário irá analisar e aprovar ou rejeitar</li>
+                            <li>Você receberá o status na página "Minhas Solicitações"</li>
+                            <li>O valor será calculado automaticamente baseado no período</li>
+                        </ul>
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-4">
+                        <a href="{% url 'carro_list' %}" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Voltar
+                        </a>
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-send"></i> Enviar Solicitação
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Calcular valor estimado automaticamente
+document.addEventListener('DOMContentLoaded', function() {
+    const dataInicio = document.querySelector('input[name="data_inicio"]');
+    const dataFim = document.querySelector('input[name="data_fim"]');
+    const carroSelect = document.querySelector('select[name="carro"]');
+    
+    function calcularValor() {
+        if (dataInicio.value && dataFim.value && carroSelect.value) {
+            const inicio = new Date(dataInicio.value);
+            const fim = new Date(dataFim.value);
+            const dias = Math.ceil((fim - inicio) / (1000 * 60 * 60 * 24));
+            
+            // Pegar preço do texto do option selecionado
+            const selectedOption = carroSelect.options[carroSelect.selectedIndex];
+            const texto = selectedOption.text;
+            const match = texto.match(/R\$ ([\d.,]+)/);
+            
+            if (match && dias > 0) {
+                const precoDiaria = parseFloat(match[1].replace(',', '.'));
+                const total = (precoDiaria * dias).toFixed(2);
+                
+                // Mostrar estimativa
+                let alertDiv = document.querySelector('.valor-estimado-alert');
+                if (!alertDiv) {
+                    alertDiv = document.createElement('div');
+                    alertDiv.className = 'alert alert-success valor-estimado-alert mt-3';
+                    document.querySelector('form').insertBefore(alertDiv, document.querySelector('.alert-warning'));
+                }
+                alertDiv.innerHTML = `
+                    <i class="bi bi-calculator"></i>
+                    <strong>Valor Estimado:</strong> R$ ${total} (${dias} dia${dias > 1 ? 's' : ''})
+                `;
+            }
+        }
+    }
+    
+    dataInicio.addEventListener('change', calcularValor);
+    dataFim.addEventListener('change', calcularValor);
+    carroSelect.addEventListener('change', calcularValor);
+});
+</script>
+{% endblock %}

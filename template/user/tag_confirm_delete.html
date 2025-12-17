@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}Deletar Tag - LouerCar{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card border-danger">
+            <div class="card-header bg-danger text-white">
+                <h4 class="mb-0">
+                    <i class="bi bi-exclamation-triangle"></i> Confirmar Exclusão
+                </h4>
+            </div>
+            <div class="card-body">
+                <div class="text-center mb-4">
+                    <i class="{{ tag.icone }} {{ tag.get_badge_class }}" style="font-size: 4rem;"></i>
+                </div>
+
+                <p class="lead text-center">Você tem certeza que deseja deletar esta tag?</p>
+                
+                <div class="alert alert-warning">
+                    <strong>Tag:</strong> 
+                    <span class="badge {{ tag.get_badge_class }} fs-6">
+                        <i class="{{ tag.icone }}"></i> {{ tag.nome }}
+                    </span>
+                </div>
+
+                <div class="alert alert-danger">
+                    <i class="bi bi-exclamation-circle"></i>
+                    <strong>ATENÇÃO:</strong>
+                    <ul class="mb-0 mt-2">
+                        <li>Grupos com esta tag ficarão sem tag</li>
+                        <li>Usuários perderão acesso aos grupos</li>
+                        <li>Esta ação não pode ser desfeita!</li>
+                    </ul>
+                </div>
+
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="d-flex justify-content-between mt-4 gap-2">
+                        <a href="{% url 'tag_list' %}" class="btn btn-secondary flex-fill">
+                            <i class="bi bi-arrow-left"></i> Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-danger flex-fill">
+                            <i class="bi bi-trash"></i> Sim, Deletar Tag
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
