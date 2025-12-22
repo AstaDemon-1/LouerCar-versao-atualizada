@@ -285,15 +285,15 @@ python manage.py collectstatic
 ```
 Administrador:
 - Username: admin
-- Senha: 12345
+- Senha: 123
 
 Funcionário:
 - Username: funcionario
-- Senha: 1234
+- Senha: 123
 
 Cliente:
 - Username: pedro
-- Senha: 12345678
+- Senha: 123
 ```
 
 ---
