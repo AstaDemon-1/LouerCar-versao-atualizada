@@ -141,4 +141,4 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # Apenas loga 
 # DEFAULT_FROM_EMAIL = 'LouerCar <louercar.noreply@gmail.com>'
 
 # Site URL (para emails)
-SITE_URL = 'http://seuusuario.pythonanywhere.com'  # ⬅️ MUDE PARA SEU USERNAME
+SITE_URL = 'http://Asta1Demon.pythonanywhere.com'  # ⬅️ MUDE PARA SEU USERNAME
