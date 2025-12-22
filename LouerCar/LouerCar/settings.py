@@ -8,9 +8,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-sua-chave-secreta-aqui-mude-em-producao'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = True  # Mude para False quando estiver 100% funcionando
 
-ALLOWED_HOSTS = []
+# ⭐ IMPORTANTE: Adicione seu domínio do PythonAnywhere aqui ⭐
+ALLOWED_HOSTS = [
+    'seuusuario.pythonanywhere.com',  # ⬅️ MUDE PARA SEU USERNAME
+    'localhost',
+    '127.0.0.1',
+]
 
 # Application definition
 INSTALLED_APPS = [
@@ -36,7 +41,6 @@ REST_FRAMEWORK = {
     ],
 }
 
-# ⭐ ADICIONE O MIDDLEWARE DE AUTENTICAÇÃO AQUI ⭐
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -45,7 +49,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'user.middleware.AuthMiddleware',  # ⭐ NOSSO MIDDLEWARE DE AUTENTICAÇÃO ⭐
+    'user.middleware.AuthMiddleware',
 ]
 
 ROOT_URLCONF = 'LouerCar.urls'
@@ -110,33 +114,31 @@ USE_I18N = True
 USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Media files
-MEDIA_URL = 'media/'
+MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-#-------
-# Adicione no settings.py as configurações de email:
-
 # =========================
-# EMAIL CONFIGURATION
+# EMAIL CONFIGURATION (Opcional - pode manter desativado)
 # =========================
-#TODO isso nao funcionou na sala pq a rede do computador do colegio proibe isso 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # Apenas loga no console
 
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 465
-EMAIL_USE_SSL = True
-EMAIL_USE_TLS = False
+# Se quiser ativar email real, descomente:
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_PORT = 465
+# EMAIL_USE_SSL = True
+# EMAIL_USE_TLS = False
+# EMAIL_HOST_USER = 'louercar.noreply@gmail.com'
+# EMAIL_HOST_PASSWORD = 'urgz dwak cqty vogj'
+# DEFAULT_FROM_EMAIL = 'LouerCar <louercar.noreply@gmail.com>'
 
-EMAIL_HOST_USER = 'louercar.noreply@gmail.com'
-EMAIL_HOST_PASSWORD = 'urgz dwak cqty vogj'
-
-DEFAULT_FROM_EMAIL = 'LouerCar <louercar.noreply@gmail.com>'
-
+# Site URL (para emails)
+SITE_URL = 'http://seuusuario.pythonanywhere.com'  # ⬅️ MUDE PARA SEU USERNAME
