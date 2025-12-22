@@ -12,7 +12,7 @@ DEBUG = True  # Mude para False quando estiver 100% funcionando
 
 # ⭐ IMPORTANTE: Adicione seu domínio do PythonAnywhere aqui ⭐
 ALLOWED_HOSTS = [
-    'Asta1Demon.pythonanywhere.com',  # ⬅️ MUDE PARA SEU USERNAME
+    'asta1demon.pythonanywhere.com',  # ⬅️ MUDE PARA SEU USERNAME
     'localhost',
     '127.0.0.1',
 ]
