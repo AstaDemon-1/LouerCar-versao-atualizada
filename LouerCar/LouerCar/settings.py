@@ -12,7 +12,7 @@ DEBUG = True  # Mude para False quando estiver 100% funcionando
 
 # ⭐ IMPORTANTE: Adicione seu domínio do PythonAnywhere aqui ⭐
 ALLOWED_HOSTS = [
-    'seuusuario.pythonanywhere.com',  # ⬅️ MUDE PARA SEU USERNAME
+    'Asta1Demon.pythonanywhere.com',  # ⬅️ MUDE PARA SEU USERNAME
     'localhost',
     '127.0.0.1',
 ]
@@ -141,4 +141,4 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # Apenas loga 
 # DEFAULT_FROM_EMAIL = 'LouerCar <louercar.noreply@gmail.com>'
 
 # Site URL (para emails)
-SITE_URL = 'http://asta1demon.pythonanywhere.com'  # ⬅️ MUDE PARA SEU USERNAME
+SITE_URL = 'http://Asta1Demon.pythonanywhere.com'  # ⬅️ MUDE PARA SEU USERNAME
